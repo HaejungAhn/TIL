@@ -9,9 +9,12 @@ UI 업데이트와 관련된 가장 중요한 포인트는 아래와 같다.
 ## 동작과정  
 1. 사용자의 이벤트가 들어오면 이를 처리할 이벤트 핸들러가 실행된다.  
 
-2. 이벤트 핸들러에서 비즈니스 로직 처리와 더불어 아래와 같이 UI를 업데이트하는 코드도 실행된다.<pre><code>label.text = "change content!"
+2. 이벤트 핸들러에서 비즈니스 로직 처리와 더불어 아래와 같이 UI를 업데이트하는 코드도 실행된다.
+```Swift
+label.text = "change content!"
 containerView.background = .black
-containerViewHeight.constant = 30</code></pre>
+containerViewHeight.constant = 30
+```
 이는 실제 UI를 업데이트하는 것이 아니다. **UI의 업데이트가 필요함을 표시**(이하 플래그 추가)하는 것이다.  
 
 3. OS는 표시된 UI만 업데이트하며 이는 **update cycle**에서 이루어진다. 
