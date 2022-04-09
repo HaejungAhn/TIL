@@ -61,7 +61,7 @@ class와 structure의 차이를 어떻게 설명할 수 있을까 고민해봤�
 
 ✓ 새롭게 알게 된 것
 - heap과 stack의 차이
-    - stack은 LIFO이기 때문에 가장 상단에 차곡차곡 데이터를 저장한다.  
+    - stack은 LIFO이기 때문에 가장 상단에(가장 마지막에) 차곡차곡 데이터를 저장한다.  
     - heap은 빈 메모리 공간을 찾아서 값을 저장하기 때문에 stack에 메모리 공간 상 주소를 저장하고 이를 참조해야 한다.
 
 - "원자적"이라는 의미   
@@ -72,6 +72,7 @@ class와 structure의 차이를 어떻게 설명할 수 있을까 고민해봤�
 ### reference counting 실행 여부
 - String은 reference counting이 발생한다.
     - String은 value type이지만 내부적으로 Character의 배열로 이루어져있고, 이는 Heap에 할당되기 때문에 필연적으로 reference counting이 발생하게 된다.
+      🤔 근데 배열은 Collection타입이고 Swift에서 Collection타입은 value type인데 왜 heap에 할당되는거지? 추가 공부가 필요함!!
     - 따라서 structure의 프로퍼티로 String을 여러개 가지고 있다면, 오히려 class보다 성능 상 좋지 않을 수 있다.
     - "structure는 무조건 reference counting이 발생하지 않는다"는 것은 잘못된 사실이다.
 
