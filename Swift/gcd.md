@@ -13,7 +13,8 @@ iOS에서 멀티스레딩을 사용할 수 있도록 도와주는 것 : GCD, NSO
 
 ---
 📝 공부한 내용을 요약하자면..  
-*GCD는 DispatchQueue에 들어온 작업들이 어떤 스레드에서 어떤 우선순위를 가지고 처리되야 할지를 관리하는 `스레드 중앙 관리자`의 역할을 한다.* -> DispatchQueue에 대해 더 알아봐야 할 것 같다. 
+- GCD는 DispatchQueue로부터 들어온 작업들이 어떤 스레드에서 ~~어떤 우선순위를 가지고~~ 처리되야 할지를 관리하는 `스레드 중앙 관리자`의 역할을 한다.
+- DispatchQueue는 작업의 실행을 관리하는 객체다. serial하게 작업을 실행할지 혹은 concurrent하게 작업을 실행할지, sync로 처리할지 async로 처리할지, 해당 queue에 들어온 작업의 우선순위는 어떠한지를 결정한다.
 
 
 
@@ -44,6 +45,7 @@ iOS에서 멀티스레딩을 사용할 수 있도록 도와주는 것 : GCD, NSO
 - Queue의 타입은 3종류가 있다.
     - `MainQueue` 
         - 메인 스레드에서 실행, serial
+        - **전체 시스템에 의해 공유되는 concurrent queue**이다. 
     - `GlobalQueue` 
         - 백그라운드 스레드에서 실행
         - **전체 시스템에 의해 공유되는 concurrent queue**이다. 
@@ -61,12 +63,14 @@ QoS는 작업의 우선순위를 나타내며, GCD가 작업에 우선순위를 
 - QoS의 종류
     - User-Interactive
         - 좋은 UX를 위해 **즉시 완료되야 하는 작업인 경우** 이를 사용함. 
+        - 시스템에서 가장 높은 우선순위를 가지고 있다.
         - UI업데이트, 애니메이션, 이벤트 핸들링 등의 작업.
     - User-Initiated
         - **UI를 통해 사용자가 비동기 작업을 시작한 경우**에 사용함. 
         - 사용자가 즉각적인 결과를 기다리거나 기다리는동안 interaction이 계속되야 하는 작업일 경우 사용함. 
         - GlobalQueue에 추가되며 우선순위는 `high`다.
     - Utility
+        - `userInteractive` `unserInitiated` `default` 다음 단계의 우선순위다.
         - 일반적으로 사용자가 볼 수 있는 진행률이 표시되는 Long - running 작업에 사용됨. 
         - 연산, I/O, 네트워킹, 지속적인 데이터 피드(?) 및 유사한 작업에서 사용된다. 
         - 에너지 효율적으로 디자인되었으며, GlobalQueue에 추가됨. 우선순위는 `low`다.
