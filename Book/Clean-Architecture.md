@@ -93,7 +93,84 @@ OO의 다양한 정의
 - 간단히 말해 **소스코드 상에서 상위 타입을 하위 타입으로 치환하더라도 완벽하게 동작해야한다**가 리스코프 치환 원칙이다. 
 - 근데 의아할 수 있다. 하위 타입으로 치환했을 때 문제가 생기는 경우가 있나? 당연히 치환 되야하는거 아님?!
     ```Swift
-    // 예제코드 작성해보기
-    print("hi")
+    enum Drink {
+        case water
+        case milk
+        case greenTea
+    }
+
+    protocol Cup {
+        func fill(drink: Drink)
+        func putInMicrowave()
+        func heat(min: Int)
+        func pull()
+    }
+
+    struct GlassCup: Cup {
+        func fill(drink: Drink) { }
+        func putInMicrowave() { }
+        func heat(min: Int) { }
+        func pull() { }
+    }
+
+    struct PlasticCup: Cup {
+        func fill(drink: Drink) { }
+        func putInMicrowave() { }
+        func heat(min: Int) { }
+        func pull() { }
+    }
+
+    let cup = Cup()
+    cup.fill()
+    cup.putInMicrowave()
+    cup.heat(min: 2)
+    cup.pull()
+    
     ```
-- 치환 가능성을 조금이라도 위배하면 시스템 아키텍처가 오염되어 상당량의 별도 메커니즘을 추가해야 할 수 있기 때문이다.?
+    위 예제 코드에서 Cup을 GlassCup으로 치환하면 정상적으로 동작할 것이다. 유리컵은 전자레인지에 돌려도 안에 있는 음료와 함께 따뜻해질뿐이니까.   
+    그렇지만 PlasticCup으로 치환하면 정상적으로 동작하지 않는다. 플라스틱 컵은 전자레인지에 돌렸을 때 녹거든!   
+    이런 케이스가 상위타입을 하위 타입으로 치환했을 때 문제가 생기는 경우다.(이해를 돕기위한 예시임!! LSP를 위반한 형태가 구체적으로 저런 형태다? ㄴㄴ)
+- 리스코프 치환원칙은 단순히 "상위 타입을 하위타입으로 치환할 수 있어야 한다"로 끝나는 것이 아니다. **사전에 약속한 기획대로 구현해야 하기 때문에 하위 타입을 생성할 때 상위 타입에서 구현한 원칙을 따라야 한다**가 핵심이다.
+- 리스코프 치환원칙을 이해하는 데 [이 글](https://pizzasheepsdev.tistory.com/9)이 많은 도움이 되었다.
+- 👀 더 봐야할 것(출처 : [이 글](https://pizzasheepsdev.tistory.com/9))
+    - 리스코프의 원칙은 새로운 객체 지향 프로그래밍 언어에 채용된 시그니처에 관한 몇 가지 표준적인 요구사항을 강제한다.
+        - 하위형에서 메서드 인수의 반공변성 
+        - 하위형에서 반환형의 공변성
+        - 하위형에서 메서드는 상위형 메서드에서 던져진 예외의 하위형을 제외하고 새로운 예외를 던지면 안 된다.
+    - 여기에 더하여 하위형이 만족해야 하는 행동 조건 몇 가지가 있다. 이것은 계약이 상속에 대해 어떻게 상호작용 하는지에 대한 제약조건을 유도하는 계약에 의한 설계 방법론과 유사한 용어로 자세히 설명되어있다.
+        - 하위형에서 선행 조건은 강화될 수 없다.
+        - 하위형에서 후행 조건은 약화될 수 없다.
+        - 하위형에서 상위형의 불변 조건은 반드시 유지되어야 한다.
+
+### ISP(Interface Segregation Principle)
+- *[no code should be forced to depend on methods it does not use.](https://en.wikipedia.org/wiki/Interface_segregation_principle)*   
+어떠한 코드도 사용하지 않는 메소드에 강제로 의존해서는 안된다.
+- 큰 덩어리의 인터페이스들을 구체적이고 작은 단위들로 분리시킴으로서 클라이언트가 필요한 메소드만 사용하도록 만들어야 한다.
+- 예제 코드를 보자! 출처는 [여기](https://pizzasheepsdev.tistory.com/10?category=849060)
+    ```Swift
+    protocol DataManagable {
+        func load()
+        func prepare()
+        func save()
+    }
+
+    struct DataLoader: DataManagable {
+        func load() {  }
+        func prepare() {  }
+        func save() {  }
+    }
+
+    ```
+    위의 코드에서 `DataLoader` 구조체는 실질적으로 load() 메소드만 필요하다. 나머지 메소드는 불필요한 상태임.   
+    근데 요구사항이 변경되서 save() 메소드의 시그니처가 변경되어 `Bool`을 리턴해야하는 상황이라면 사용도 하지않는 save() 메소드로 인해 `DataLoader` 구조체의 수정이 불가피하다.   
+    이런 상황을 방지하기 위한 것이 ISP임.
+
+
+### DIP(Dependency Inversion Principle)
+- 의존성 역전이란 소스 코드의 의존성이 제어흐름과는 반대방향으로 역전되는 것을 말하며 이는 추상 인터페이스를 구현하고 이를 통해 동작하도록 만듦으로서 이루어진다.
+- 따라서 소스코드 의존성이 항상 추상에 의존해야한다. 하지만 이는 현실적으로 어렵다.
+- 그렇기 때문에 안정적이라 추후 변화가 없는 경우, 변경이 있더라도 엄격하게 통제되는 경우라면 구체(concretion)에 의존해도 괜찮다.
+- *구체적이며 변동성이 크다면 절대로 그 이름을 언급하지 말아라.*
+- 👀 더 봐야할 것
+    - 추상 팩토리란?
+    - 의존성 주입이란?
