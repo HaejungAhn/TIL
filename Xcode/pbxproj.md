@@ -11,7 +11,11 @@
 오늘은 `project.pbxproj`가 무슨 파일인지 공부해보겠음.
 
 ### pbxproj는 무슨 파일인가
-우선 해당 파일이 어느 위치에 있는지를 알  필요가 있음. 
+(2022-04-26 추가)   
+> 🔗 [Xcode and git: bridging the gap](https://thoughtbot.com/blog/xcode-and-git-bridging-the-gap)   
+Xcode configuration bundle에서 가장 중요한 파일로 <u>모든 연결된 파일들과 파일들이 그룹핑된 정보, 연결된 프레임워크, 프로젝트의 빌드 설정에 대한 **참조를 유지, 관리하는 역할**</u>을 한다. 이런 이유로 버전 컨트롤에서 project.pbxproj를 제외시켜선 안된다.
+
+우선 해당 파일이 어느 위치에 있는지를 알 필요가 있음. 
 - Xcode에서 처음 프로젝트를 생성하면 `*.xcodeproj`라는 파일이 생성된다. 파일처럼 보이지만 사실 디렉토리임.
 - 이걸 터미널에서 열거나 파일 우클릭 > 패키지 내용 보기를 선택하면 안에 있는 파일 목록을 볼 수 있다. 파일 목록은 아래와 같다. 이 안에 `project.pbxproj` 파일이 있음.  
 ![xcodeproj 안에 있는 파일들](./images/pbxproj-xcodeproj-files.png)
