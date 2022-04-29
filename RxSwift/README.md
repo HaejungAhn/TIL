@@ -15,13 +15,10 @@
 
 ### 📝  스터디 계획
 1. Rx와 Observable, Subject의 기본 개념을 잡는다.
-2. 예제 프로젝트를 보면서 거기에 사용되는 operator나 기타 개념들이 나올 때마다 검색한다.
-    
-    https://github.com/NohEunTae/RxMVVMSample (블로그 설명은 [여기](https://ntomios.tistory.com/13?category=935845) 한국어임)
-    
-    https://github.com/DroidsOnRoids/RxSwiftExamples
-    
-    https://github.com/marinbenc/ReactiveWeatherExample
+2. 예제 프로젝트를 보면서 거기에 사용되는 operator나 기타 개념들이 나올 때마다 검색한다.   
+    - [예제프로젝트1](./example-project-01.md)   
+    - https://github.com/DroidsOnRoids/RxSwiftExamples
+    - https://github.com/marinbenc/ReactiveWeatherExample
     
 3. 책은 틈틈이 읽는다.
 
