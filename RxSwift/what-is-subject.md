@@ -6,9 +6,9 @@
 - 사전적 의미 : 주제, 받게 하다, 종속시키다, 받아야 할, ~을 조건으로 하여 등등 매우 많음
 - Observable과 Observer 역할을 동시에 수행한다.
     
-    `Observable`은 next, complete, error 이벤트를 emit(방출)하는 것이고, `Observer`는 관찰자(그래서 하나 이상의 Observable을 구독할 수 있음, 같은 subject를 구독하는건 불가능한가?)
+    `Observable`은 ~~next, complete, error 이벤트를 emit(방출)하는 것~~ 비동기 데이터 스트림이고, `Observer`는 관찰자
     
-    **🤔 이벤트를 방출하면서 동시에 관찰자 역할(subscriber)을 수행한다? 왜 이런걸 만들었을까?**
+    **🤔 데이터 스트림이면서 동시에 관찰자 역할(subscriber)을 수행한다? 왜 이런걸 만들었을까?**
     
 - 사용하는 이유
     
@@ -45,6 +45,11 @@
     - onNext()메소드를 사용하지 않음.
     - variable에 `asObservable()`을 사용하면 subject 그 자체에 접근할 수 있다.(variable 자체는 subject가 아니므로 이렇게 접근해서 subscribe해야함) 
     - subject와의 추가적인 차이가 있다면 subject와 달리 error를 emit하지 않는 것 그리고 메모리에서 해제될 때 자동으로 complete 이벤트를 발생시킨다.
+    - deprecated될 예정이라고..
+
+- `AsyncSubject`
+    - 여기에 추가적으로 공식문서에서는 AsyncSubject도 소개하고 있다. 
+    - 이는 구독한 시점과 상관없이 complete되기 직전 값 딱 하나만을 방출받게 되는 것을 의미한다. 만약 error로 종료될 경우 completed가 호출되지 않기 때문에 어떠한 값도 받을 수 없다.
 
 **Subject와 Observable의 차이**
 
@@ -82,3 +87,14 @@
     	print("observer subject 2 : \(element)") // observer subject 1 : 92
     })
     ```
+
+# Relay
+
+[https://nacho.tistory.com/21](https://nacho.tistory.com/21)
+
+- RxCocoa 안에 있다. Subject의 wrapper 클래스로 두가지 종류(PublishRelay, BehaviorRelay)가 있다. 각각 PublishSubject, BehaviorSubject에 대응됨.
+- Subject와의 차이는 두가지가 있는데 1) completed되지 않음 2) error를 방출하지 않음 이다. Dispose 되기 전까지는 계속 작동한다.
+- 그래서 Relay는 UI작업을 하기 적합하다고 함
+    - RxCocoa 안에 있다고 하니 UI작업과 관련해 만들어졌다는 것은 알겠음 ㅇㅇ
+    - [여기](https://jinshine.github.io/2019/01/05/RxSwift/3.Subject%EB%9E%80/) → completed, error 발생 시 바로 subscribe가 종료되는 반면 relay는 error, completed를 발생시키지 않고 dispose되기 전까지 계속 동작하기 때문에 UI event에서 적절하다고 하는 것 같다.)
+- relay는 이벤트를 방출할 때 onNext 대신 accept를 사용한다.
