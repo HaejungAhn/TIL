@@ -41,15 +41,15 @@
 - 📒  Tracked : 추적   
     - Tracked 파일은 <u>이미 스냅샷에 포함되어 있던</u> 파일이다. 즉, **Git이 이미 알고 있는 파일**이라는 의미다.
     - Tracked 파일은 또 Unmodified, Modified, Staged(커밋으로 저장소에 기록할 예정인) 상태 중 하나의 상태를 가진다.
-- 그 외 나머지 파일들은 Untracked 파일이다. 워킹 디렉토리에 있는 파일 중 스냅샷에도, Staging Area에도 포함되지 않은 파일이다. (git이 이미 알고 있는 파일도 아니고, 커밋으로 기록할 파일도 아님을 의미)
-![git에서 파일의 라이프사이클](https://git-scm.com/book/en/v2/images/lifecycle.png)
+- 그 외 나머지 파일들은 Untracked 파일이다. 워킹 디렉토리에 있는 파일 중 스냅샷에도, Staging Area(Git Index라고도 함)에도 포함되지 않은 파일이다. (git이 이미 알고 있는 파일도 아니고, 커밋으로 기록할 파일도 아님을 의미)
+<img src="https://git-scm.com/book/en/v2/images/lifecycle.png" width="80%" alt="git에서 파일의 라이프사이클">
 
 ### 파일의 상태 확인하기
 - 파일의 상태를 확인하기 위해서 `$ git status` 명령어를 사용한다. 아래 그림과 같은 내용을 확인할 수 있다.   
-여기서 "Changes to be committed"가 Staged 상태에 있는 것이고, Untracked에 있는 "README.md"는 방금 추가한 파일임.
-![git status를 통해 확인한 파일의 상태](./images/2-basic-status.png)
+여기서 "Changes to be committed"가 Staged 상태에 있는 것이고, Untracked에 있는 "README.md"는 방금 추가한 파일임.   
+<img src="./images/2-basic-status.png" width="70%" alt="git status를 통해 확인한 파일의 상태">
 - 파일 상태를 짤막하게 확인할 수도 있는데 이때는 -s 혹은 --short를 함께 붙여준다. `$ git status -s` 혹은 `$ git status --short`   
-![git status를 짤막하게 확인하기](./images/2-basic-status-short.png)   
+<img src="./images/2-basic-status-short.png" alt="git status를 짤막하게 확인하기">   
 -`??`는 아직 추적하지 않는 파일 앞에 붙는다.   
 -`A`는 새롭게 추가해서 staged 상태로 추가된 파일 앞에 붙는다.   
 -`M`은 커밋된 파일 중 수정된 파일 앞에 붙는다. test.swift의 경우 수정 후 staged에 올라간 상태에서 다시 수정을 진행해서 두개가 붙은거임.
@@ -96,8 +96,8 @@ $ git status      # 상태 확인해보면 더이상 DS_Store가 untracked에도
 ### Staged와 Unstaged 상태의 변경 내용을 보기
 - 파일의 어떤 라인이 추가됐고 삭제됐는지를 보고 싶다면 `$ git diff`명령을 사용한다.
 ![git diff 결과](./images/2-basic-git-diff.png)
-- **워킹 디렉토리에 있는 것(Unstaged 상태)과 Staging Area에 있는 것을 비교**한다. 그래서 수정하고 아직 stage하지 않은 것을 보여준다.
-- 만약 Staging Area에 올린 파일의 변경 부분을 보고 싶다면 `$ git diff --staged` 혹은 `$ git diff --cached`옵션을 사용한다. **저장소에 커밋한 것과 Staging Area에 있는 것을 비교**한다.
+- **워킹 디렉토리에 있는 것(Unstaged 상태)과 Staging Area(Git Index)에 있는 것을 비교**한다. 그래서 수정하고 아직 stage하지 않은 것을 보여준다.
+- 만약 Staging Area(Git Index)에 올린 파일의 변경 부분을 보고 싶다면 `$ git diff --staged` 혹은 `$ git diff --cached`옵션을 사용한다. **저장소에 커밋한 것과 Staging Area에 있는 것을 비교**한다.
 ![git diff --staged 결과](./images/2-basic-git-diff-staged.png)
 *첫번째 이미지와 비교했을 때 index 및 수정된 내용이 다른 걸 볼 수 있다.*
 - `$ git diff`명령은 수정 내용 전체를 보여주는게 아니라 Unstaged 상태인 것들만 보여준다!
@@ -105,15 +105,134 @@ $ git status      # 상태 확인해보면 더이상 DS_Store가 untracked에도
 
 ### 변경사항 커밋하기
 - `$ git commit`을 통해 Staged 상태에 있는 파일들을 커밋한다. (단, Unstaged 상태의 파일은 커밋되지 않음)
-- Staging area를 거치지 않고 다이렉트로 Tracked 상태의 파일을 커밋할 수 있는 방법으로는 `$ git commit -a`를 사용하는 것이다.(git이 자동으로 Staging area에 파일들을 넣어줌)    
+- Staging area(Git Index)를 거치지 않고 다이렉트로 Tracked 상태의 파일을 커밋할 수 있는 방법으로는 `$ git commit -a`를 사용하는 것이다.(git이 자동으로 Staging area(Git Index)에 파일들을 넣어줌)    
 🖐 필요하지 않은 파일도 commit될 수 있으므로 주의해서 사용해야 함.
 
-### 파일 삭제하기(여기서붙~~)
-- **git에서 파일을 제거하려면** `$ git rm` 명령으로 **Tracked 상태의 파일을 삭제**한 후(정확하게는 Staging Area에서 삭제하는 것) 커밋해야 한다. 이 명령은 워킹 디렉토리에 있는 파일도 삭제하기 때문에 실제로 파일도 지워진다.
+### 파일 삭제하기
+- **git에서 파일을 제거하려면** `$ git rm` 명령으로 <u>Tracked 상태의 파일을 삭제한 후(정확하게는 Staging Area(Git Index)에서 삭제하는 것) 커밋</u>해야 한다. 이 명령은 워킹 디렉토리에 있는 파일도 삭제하기 때문에 실제로 파일도 지워진다.
 - git 명령을 사용하지 않고 단순히 워킹 디렉토리에서 파일을 삭제 후 `$ git status` 명령으로 상태를 확인하면 Git은 현재 "Changes not staged for commit" (즉, Unstaged 상태)라고 표시해준다.
+    ```Bash
+    $ vi test2.swift                # test2.swift 파일 생성
+    $ git add .                     # 현재 디렉토리에서 발생한 변경사항을 staging에 올림
+    $ git status        
+    On branch master
+    Changes to be committed:
+    (use "git restore --staged <file>..." to unstage)
+        modified:   test2.swift
 
-## [2.3 커밋 히스토리 조회하기]()
+    $ rm test2.swift                # test2.swift 파일 삭제
+    $ git status
+    On branch master
+    Changes to be committed:        # 변경사항이 Staging area에 올라간 상태
+    (use "git restore --staged <file>..." to unstage)
+        modified:   test2.swift
 
+    Changes not staged for commit:  # Tracked되고 있는 파일이지만, 변경사항이 staging area에 올라가지는 않음. 만약 Untracked되고 있는 파일이었다면 "Untracked files" 항목에 있어야 함.
+    (use "git add/rm <file>..." to update what will be committed)
+    (use "git restore <file>..." to discard changes in working directory)
+        deleted:    test2.swift
+
+    $ git rm test2.swift
+    rm 'test2.swift'
+
+    $ git status
+    On branch master
+    Changes to be committed:
+    (use "git restore --staged <file>..." to unstage)
+        deleted:    test2.swift
+
+    ```
+- 커밋하면 파일은 삭제되고 Git은 이 파일을 더는 추적하지 않는다.
+- 이미 파일을 수정했거나 Staging Area에 추가했다면...
+
+    - `$ git rm`만으로는 삭제할 수 없다. 삭제하려 할 경우 아래와 같은 오류가 발생한다.
+        ```
+        error: the following file has changes staged in the index:
+        ```
+    - `-f` 옵션을 주어 강제로 삭제해야 한다: `$ git rm -f test4.swift`
+
+- Staging area에서만 지우고 워킹 디렉토리에는 파일을 그대로 남겨둘 수도 있다. 즉, 하드디스크에는 파일이 존재하지만 Git은 파일을 더이상 추적하지 않는 것이다.
+
+    - `.gitignore`파일에 추가하는 것을 까먹었거나 대용량 로그 파일이나 컴파일된 파일 등 실제 프로젝트에서는 필요치 않은 파일들을 실수로 추가했을 때 쓴다.
+        ```Bash
+        $ vi test5.swift
+        $ git add .
+        $ git status
+        On branch master
+        Changes to be committed:
+        (use "git restore --staged <file>..." to unstage)
+            new file:   test5.swift
+        
+        $ git rm --cached test5.swift
+        rm 'test5.swift'
+        $ git status
+        On branch master
+        Untracked files: # cached 옵션을 통해 삭제한 파일이 Git 추적에서 제외됨.
+        (use "git add <file>..." to include in what will be committed)
+            test5.swift
+
+        nothing added to commit but untracked files present (use "git add" to track)
+
+        $ ls
+        README.md	test5.swift # cached 옵션을 통해 삭제한 파일이 하드디스크에 그대로 남아있음.
+        ```
+- 여러개의 파일이나 디렉토리 삭제하기: `$ git rm log/\*.log` 혹은 `$ git rm \*~`
+
+### 파일 이름 변경하기
+- Git은 다른 VCS 시스템과는 달리 <u>파일 이름의 변경이나 파일의 이동을 명시적으로 관리하지 않는다.</u> 다시말해 파일 이름이 변경됐다는 별도의 정보를 저장하지 않는 것이다. Git은 똑똑해서 굳이 파일 이름이 변경되었단느 것을 추적하지 않아도 아는 방법이 있다. 😲
+- 파일 이름 변경을 Git은 어떻게 아는걸까?   
+    ```Bash
+    $ vi test66.swift
+    $ git add .
+    $ git commit -m "make new file"
+    $ git mv test66.swift test666.swift
+    $ ls
+    README.md	test5.swift	test666.swift
+
+    $ git status
+    On branch master
+    Changes to be committed:
+    (use "git restore --staged <file>..." to unstage)
+        renamed:    test66.swift -> test666.swift  # renamed라고 표시됨!
+    ```
+    사실 mv는 일종의 단축 명령어이다. mv를 풀어쓰면 아래와 같다.
+    ```Bash
+    $ mv test66.swift test666.swift
+    $ git rm test66.swift
+    $ git add test666.swift
+    ```
+
+## [2.3 커밋 히스토리 조회하기](https://git-scm.com/book/ko/v2/Git%EC%9D%98-%EA%B8%B0%EC%B4%88-%EC%BB%A4%EB%B0%8B-%ED%9E%88%EC%8A%A4%ED%86%A0%EB%A6%AC-%EC%A1%B0%ED%9A%8C%ED%95%98%EA%B8%B0)
+- 저장소 히스토리는 `$ git log`를 이용하면 된다. 시간순으로(가장 최신순으로) 커밋 히스토리가 나온다.
+    <img src="./images/2-basic-git-log.png" width="70%">   
+    각 커밋의 SHA-1 체크섬, 저자이름 및 이메일, 커밋한 날짜와 메세지를 볼 수 있다.
+
+- 여러 유용한 옵션들
+
+    - `$ git log -p` 혹은 `$ git log --patch`   
+    각 커밋의 diff 결과를 보여준다.    
+    - `$ git log -<n>`   
+    최신 n개의 결과만 보여준다.
+    - `$ git log --stat`   
+    <img src="./images/2-basic-git-log-stat.png" width="70%">      
+    어떤 파일이 얼마나 많이 변경됐는지, 얼마나 많은 라인이 추가/삭제됐는지 보여준다.   
+    - `$ git log --pretty=oneline`   
+    <img src="./images/2-basic-git-log-pretty.png" width="70%">      
+    pretty의 값으로 oneline 대신 다른걸 사용할 수 있으며, [여기](https://git-scm.com/book/ko/v2/Git%EC%9D%98-%EA%B8%B0%EC%B4%88-%EC%BB%A4%EB%B0%8B-%ED%9E%88%EC%8A%A4%ED%86%A0%EB%A6%AC-%EC%A1%B0%ED%9A%8C%ED%95%98%EA%B8%B0#pretty_format)에서 포맷들을 볼 수 있다.
+    - `$ git log --pretty=format:"%h %s" --graph`
+    <img src="./images/2-basic-git-log-graph.png" width="70%">      
+    오😲
+    - `--since`, `--until` 같은 시간을 기준으로 조회하는 옵셔도 있다.
+    - `--author`옵션으로 저자를 지정하여 검색할 수도 있고 `--grep`옵션으로 커밋 메시지에서 키워드를 검색할 수도 있다. 
+    - `-S`를 이용하면 코드에서 추가/제거된 내용 중 특정 텍스트가 포함되어 있는지를 검색할 수 있다.
+
+    ```Bash
+    # 해석해보자!
+    $ git log --pretty="%h - %s" --author=gitster --since="2008-10-01" \
+   --before="2008-11-01" --no-merges -- t/
+   ```
+
+- 저자(Author)와 커미터(Committer)는 서로 다른 것이므로 구분해야한다.
 
 ## [2.4 되돌리기]()
 
@@ -121,7 +240,25 @@ $ git status      # 상태 확인해보면 더이상 DS_Store가 untracked에도
 ## [2.5 리모트 저장소]()
 
 
-## [2.6 태그]()
+## [2.6 태그](https://git-scm.com/book/ko/v2/Git%EC%9D%98-%EA%B8%B0%EC%B4%88-%ED%83%9C%EA%B7%B8) (ongoing)
+- 다른 VCS처럼 git도 태그를 지원하며 보통 릴리즈할 때 자주 사용한다.(v1.0 등등)
+- 이미 만들어진 태그 조회하기: `$ git tag`   
+알파벳 순서대로 태그를 보여준다.   
 
+- 검색 패턴을 이용해 태그 검색이 가능하다: `$ git tag -l "v1.8.5*"`   
+v1.8.5로 시작하는 태그 목록 전체 가져올 수 있음. 와일드카드(*)를 이용하여 태그 리스트 조회 시 반드시 `-l` 혹은 `--list`를 붙여줘야 한다.
 
-## [2.7 Git Alias]()
+### 태그 붙이기
+- git의 태그는 `Lightweight`와 `Annotated` 태그 두종류로 나뉜다.
+- `Lightweight` 태그는 단순히 특정 커밋에 대한 포인터일 뿐이다.
+- `Annotated` 태그는 git에 태그를 만든 사람의 이름, 이메일과 태그를 만든 날짜, 태그 메시지도 저장한다. GPG(GNU Privarcy Guard?)로 서명할 수도 있다.
+
+## [2.7 Git Alias](https://git-scm.com/book/ko/v2/Git%EC%9D%98-%EA%B8%B0%EC%B4%88-Git-Alias)
+- 명령어를 축약해서 사용할 수 있도록 alias를 지정하는 것. git의 명령어를 모두 치는게 귀찮다면 `$ git config`를 이용해 각 명령의 alias를 만들 수 있다.
+    ```Bash
+    $ git config --global alias.co checkout
+    $ git config --global alias.br branch
+    $ git config --global alias.ci commit
+    $ git config --global alias.st status
+    ```
+    이제 `git commit` 대신 `git ci`를 사용해 커밋을 진행할 수 있다.
