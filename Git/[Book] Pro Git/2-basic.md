@@ -234,13 +234,44 @@ $ git status      # 상태 확인해보면 더이상 DS_Store가 untracked에도
 
 - 저자(Author)와 커미터(Committer)는 서로 다른 것이므로 구분해야한다.
 
-## [2.4 되돌리기]()
+## [2.4 되돌리기](https://git-scm.com/book/ko/v2/Git%EC%9D%98-%EA%B8%B0%EC%B4%88-%EB%90%98%EB%8F%8C%EB%A6%AC%EA%B8%B0)
+📍 한번 되돌리면 복구할 수 없다. 주의해야 함!
+
+### `--amend` 옵션
+- 완료한 커밋을 수정해야 할 경우가 있다. 아래와 같은 예시가 이에 해당된다.
+    - 너무 일찍 커밋함
+    - 어떤 파일을 빼먹음
+    - 커밋 메세지 잘못 적음
+    - 코드 리뷰를 받고 작고 사소한 수정사항이 생김  
+    😲 바로 어제 내가 경험한 케이스였다! 어제는 [Git - 이미 올린 Pull request 수정하기](https://kimtaehyun98.tistory.com/119)를 참고함.
+- 다시 수정하고 싶다면 파일 수정 작업을 진행하고, 해당 파일을 Staging Area에 추가한다. 그리고 `$ git commit --amend` 옵션을 이용해 **커밋을 다시 작성**할 수 있다. (amend는 고치다, 수정하다의 뜻을 가지고 있음.)
+- 해당 명령어를 이용하면 편집기가 실행되며, 이전 커밋 메세지가 자동으로 포함된다. 메세지를 수정하지 않고 그대로 커밋해도 기존의 커밋을 덮어쓴다.
+- 이렇게 `--amend` 옵션으로 커밋을 고치는 작업은 <u>추가로 작업한 일이 작다 하더라도 이전의 커밋을 완전히 새로 고쳐서 새 커밋으로 변경하는 것</u>을 의미한다. 이전의 커밋은 일어나지 않은 일이 되는 것이고 당연히 히스토리에도 남지 않는다. 
+- 따라서 협업할 때는 매우 주의해서 사용해야 한다. 충돌날 가능성이 있기 때문에 이미 develop 브랜치에 반영된 상태라면 새롭게 PR을 등록하는게 맞으나, 아직 develop 브랜치에 머지되지 않은 상태이기 때문에, 그리고 내가 작업한 브랜치를 다른 개발자가 pull 한 이후 사용하는 것이 아니었기 때문에 해당 옵션을 사용했다.
+- `--amend` 옵션으로 커밋을 고치는 작업의 장점: 마지막 커밋 작업에서 아주 작고 사소한 것이 변경되야 할 경우 새로운 커밋으로 분리하지 않고, 하나의 커밋에서 처리할 수 있다. 즉, "앗차, 빠진 파일 넣었음", "이전 커밋에서 오타 살짝 고침" 등의 커밋을 만들지 않겠다는 의미임!!
+
+
+### 파일 상태를 Unstage로 변경하기
+- staging area와 워킹 디렉토리 사이를 넘나들어보자!
+- 폴더 F에 A와 B 파일이 있음. 각각 따로따로 커밋을 하려고 했는데 `$ git add .` 명령어로 전체 파일을 Staging area에 넣어버렸다!😢 어떻게 해야할까?
+- `$ git status` 명령어를 실행하면 (use "git reset HEAD <file>..." to unstage)라는 메세지를 볼 수 있다. 이걸 이용하면 됨!
+- `$ git reset HEAD <파일>` 명령어를 사용하면 해당 파일을 unstaged 상태로 되돌릴 수 있다.
+- **`git reset` 명령어는 매우 위험하다.** `--hard` 옵션을 이용하면 더 위험하다. 하지만 위에서처럼 옵션 없이 사용하면 워킹 디렉토리의 파일은 건드리지 않는다.
+- `$ git status` 명령어를 실행하면 (use "git restore --staged <file>..." to unstage) 라는 메세지도 볼 수 있다. (지금은 reset 말고 restore가 보임) 이 역시 staging area에 있는 파일을 unstaged 상태로 변경하는 명령어다.
+
+### Modified 파일 되돌리기
+- 특정 파일을 수정하고 나서 다시 되돌릴 수 있는 방법은 무엇일까? 즉, 최근 커밋된 버전 혹은 처음 clone 했을 때와 동일한 파일로 되돌리는 방법은 무엇일까? 
+- `$ git status` 명령어를 실행하면 방법을 알 수 있다.   
+(use "git checkout -- <file>..." to discard changes in working directory)  
+- staging area에 올라가있지 않은 상태여야지만 수정사항을 되돌릴 수 있다.
+
+
 
 
 ## [2.5 리모트 저장소]()
 
 
-## [2.6 태그](https://git-scm.com/book/ko/v2/Git%EC%9D%98-%EA%B8%B0%EC%B4%88-%ED%83%9C%EA%B7%B8) (ongoing)
+## [2.6 태그](https://git-scm.com/book/ko/v2/Git%EC%9D%98-%EA%B8%B0%EC%B4%88-%ED%83%9C%EA%B7%B8)
 - 다른 VCS처럼 git도 태그를 지원하며 보통 릴리즈할 때 자주 사용한다.(v1.0 등등)
 - 이미 만들어진 태그 조회하기: `$ git tag`   
 알파벳 순서대로 태그를 보여준다.   
@@ -251,7 +282,68 @@ v1.8.5로 시작하는 태그 목록 전체 가져올 수 있음. 와일드카�
 ### 태그 붙이기
 - git의 태그는 `Lightweight`와 `Annotated` 태그 두종류로 나뉜다.
 - `Lightweight` 태그는 단순히 특정 커밋에 대한 포인터일 뿐이다.
-- `Annotated` 태그는 git에 태그를 만든 사람의 이름, 이메일과 태그를 만든 날짜, 태그 메시지도 저장한다. GPG(GNU Privarcy Guard?)로 서명할 수도 있다.
+- `Annotated`('주석이 달린'이라는 뜻) 태그는 git에 태그를 만든 사람의 이름, 이메일과 태그를 만든 날짜, 태그 메시지도 저장한다. GPG(GNU Privarcy Guard?)로 서명할 수도 있다.
+
+### 태그 붙이기: Annotated
+- `Annotated` 태그 만들기: `$ git tag -a <태그명> -m "<메세지>"`   
+`-a` 옵션을 통해 `Annotated` 태그를 만들 수 있다.   
+`-m` 옵션을 통해 tag 저장하면서 메세지도 저장할 수 있다. -m 옵션을 추가하지 않을 경우 git tag 명령어를 실행했을 때 편집기가 실행된다.
+- `$ git show <태그명>` 명령어를 통해 태그 정보와 커밋 정보를 모두 확인할 수 있다. 커밋정보를 보여주기 전에 누가 이 태그를 만들었고 언제 만들었는지, 메일주소는 어떻게 되는지, 태그 메세지는 무엇인지 등을 보여준다.
+    ```Swift
+    $ git show v1.4
+    tag v1.4
+    Tagger: HaejungAhn <메일주소>
+    Date:   Wed May 18 21:28:56 2022 +0900
+
+    my version 1.4
+
+    commit 0310f7575442106a89ec74233962c480136d56c4 (HEAD -> master, tag: v1.4)
+    (이하생략)
+    ```
+
+### 태그 붙이기: Lightweight
+- 다른 정보는 저장하지 않는다. 그저 파일에 커밋 체크섬을 저장하는 것 뿐이다.
+- `$ git tag <태그명>`
+
+### 나중에 태그하기
+- 예전 커밋에 대해서도 태그할 수 있다.
+- `git tag -a <태그명> <짧은 체크섬>`
+
+### 태그 공유하기
+- **git push 명령어는 로컬에서 붙인 태그를 자동으로 리모트에 전송해주지 않는다.**
+- 따라서 별도로 push해주어야 한다: `$ git push origin <태그명>`
+- 한번에 여러개의 태그를 push하고 싶다면: `$ git push origin --tags`
+
+### 태그 체크아웃하기
+- 예를 들어 태그가 특정 버전을 가리키고 있고, 특정 버전의 파일을 체크아웃 해서 확인하고 싶다면 `$ git checkout <태그명>` 명령어를 실행한다.
+- 단 태그를 체크아웃하면(브랜치를 체크아웃 하는 것이 아니라면?) "detached HEAD(떨어져 나온 HEAD)" 상태가 되며 일부 Git 관련 작업이 브랜치에서 작업하는 것과 다르게 동작할 수 있다.
+    ```Swift
+    A	test666.swift
+    Note: switching to 'v1.4.1'.
+
+    You are in 'detached HEAD' state. You can look around, make experimental
+    changes and commit them, and you can discard any commits you make in this
+    state without impacting any branches by switching back to a branch.
+
+    If you want to create a new branch to retain commits you create, you may
+    do so (now or later) by using -c with the switch command. Example:
+
+    git switch -c <new-branch-name>
+
+    Or undo this operation with:
+
+    git switch -
+
+    Turn off this advice by setting config variable advice.detachedHead to false
+
+    HEAD is now at 25bdf5f add new file
+    ```
+- "detached HEAD" 상태에서는 작업을 하고 커밋을 만들면, 태그는 그대로 있으나 새로운 커밋이 하나 쌓인 상태가 된다. 그리고 새 커밋에 도달할 수 있는 방법이 따로 없게 된다. 물론 커밋의 해시 값을 정확히 기억하고 있으면 가능하긴 하다.
+
+- detached HEAD 상태에서 수정 후 커밋 진행(이때 커밋 체크섬이 abcdefg라고 가정) -> 다른 브랜치로 이동 -> 다시 태그가 존재하는 브랜치로 이동 -> git log를 통해 커밋내용 확인해보면 abcdefg 체크섬을 가진 commit 내용이 없음.
+
+- 따라서 특정 태그의 상태에서 새로 작성한 커밋이 버그 픽스와 같이 의미있도록 만들려면 반드시 브랜치를 만들어서 작업하는 것이 좋다.
+
 
 ## [2.7 Git Alias](https://git-scm.com/book/ko/v2/Git%EC%9D%98-%EA%B8%B0%EC%B4%88-Git-Alias)
 - 명령어를 축약해서 사용할 수 있도록 alias를 지정하는 것. git의 명령어를 모두 치는게 귀찮다면 `$ git config`를 이용해 각 명령의 alias를 만들 수 있다.
