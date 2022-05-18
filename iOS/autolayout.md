@@ -1,4 +1,6 @@
-2022-03-07
+2022-03-07   
+2022-05-16: Autolayout과 Autoresize에 대한 비교를 해보자!
+
 
 ---
 # AutoLayout
@@ -13,7 +15,7 @@
 
 ---
 
-### Auto Layout이란?
+## Auto Layout이란?
 
 > Auto Layout dynamically calculates the size and position of all the views in your view hierarchy, based on constraints placed on those views.
 > 
@@ -22,15 +24,15 @@ Auto Layout은 뷰들의 constraints를 기반으로 동적으로 view hierarchy
 
 즉, constraints based layout이 Auto Layout이라는 의미다.
 
-[하지만 모든 Auto Layout이 constraints 기반인건 아니다.](https://www.notion.so/Auto-layout-constraint-based-layout-16a6f8b91e824806a2c1b212d5db220b) 
+[하지만 모든 Auto Layout이 constraints 기반인건 아니다.](https://reasonable-repo.tistory.com/entry/Auto-layout-Constraint-based-layout-%EC%9D%80-%EC%84%9C%EB%A1%9C-%EB%8B%A4%EB%A5%B8-%EA%B2%83%EC%9D%BC%EA%B9%8C) 
 
-### constraints의 예시
+## constraints의 예시
 
 ImageView가 화면의 정 중앙에 위치해 있고, Button의 윗부분과 ImageView의 아랫부분이 10 포인트 간격을 둔 채 제약조건에 묶임 → Imageview의 사이즈가 변경되면 Button의 위치도 함께 변경됨. 
 
 → 특정 뷰의 변경에 맞춰 자동으로 다른 뷰의 위치나 사이즈가 변하기 때문에 Auto layout이라 부른다. 
 
-### External / Internal Change
+## External / Internal Change
 
 constraints 기반의 접근방식은 내,외부 변경에 따라 동적으로 UI가 반응하도록 만들 수 있다. 
 
@@ -49,7 +51,7 @@ constraints 기반의 접근방식은 내,외부 변경에 따라 동적으로 U
         
     - 앱에서 다양한 폰트와 폰트 사이즈를 지원할 경우 : UI에 있는 텍스트 요소의 width와 height에 변화가 필요하다.
 
-### Auto Layout vs. Frame based layout
+## Auto Layout vs. Frame based layout
 
 UI 레이아웃 하는 방법은 3가지가 있다.
 
@@ -75,7 +77,7 @@ UI 레이아웃 하는 방법은 3가지가 있다.
 
 장점 : external, internal change에 대응할 수 있다.
 
-### [Auto Layout Without Constraints](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/AutoLayoutWithoutConstraints.html#//apple_ref/doc/uid/TP40010853-CH8-SW1)
+## [Auto Layout Without Constraints](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/AutolayoutPG/AutoLayoutWithoutConstraints.html#//apple_ref/doc/uid/TP40010853-CH8-SW1)
 
 UIStackView는 복잡한 constraints를 사용하지 않고도 Auto Layout의 장점을 쉽게 활용할 수 있도록 만들어준다.
 
@@ -86,7 +88,7 @@ UIStackView 내에서 Auto Layout을 활용할 수 있도록 만들어주는 속
 - alignment(axis가 vertical-세로로 배치-일 때의 뷰 배치를 정의)
 - spacing(스택뷰 안에 있는 element간 간격)
 
-### Intrinsic Size에 대해서 설명하시오.
+## Intrinsic Size에 대해서 설명하시오.
 
 > — 🔗  [[O’Relly] Intrinsic Content Size](https://www.oreilly.com/library/view/ios-programming-the/9780133491876/ch16s04.html)
 Intrinsic content size is information that a view has about how big it should be based on what it displays.
@@ -96,7 +98,7 @@ view가 **표시해야할 컨텐츠를 기반**으로 얼마만큼의 사이즈�
 
 UILabel의 경우 지정된 텍스트의 폰트와 사이즈를 기준으로 intrinsic size가 된다. UIImageView의 경우 이미지의 사이즈가 intrinsic content size가 된다.
 
-### hugging, resistance에 대해서 설명하시오.
+## hugging, resistance에 대해서 설명하시오.
 
 둘다 intrinsic size와 관련된 제약이다.
 
@@ -104,11 +106,11 @@ UILabel의 경우 지정된 텍스트의 폰트와 사이즈를 기준으로 int
 
 `compression resistance`는 고유 사이즈가 현재보다 더 줄어들길 원치 않을 때 사용한다. priority가 상대적으로 클수록 고유 사이즈가 줄어들지 않는다.
 
-### Left Constraint 와 Leading Constraint 의 차이점을 설명하시오.
+## Left Constraint 와 Leading Constraint 의 차이점을 설명하시오.
 
 오른쪽에서 왼쪽으로 읽는 언어를 사용할 때 차이가 나타난다. Left Constraint는 무조건 왼쪽에 제약을 걸지만 Leading Constraint는 언어의 시작점을 기준으로 제약을 걸기 때문에 아랍어와 같이 오른쪽에서 왼쪽으로 읽는 언어에 유연하게 대응할 수 있다.
 
-### Safearea에 대해서 설명하시오.
+## Safearea에 대해서 설명하시오.
 
 노치나 상태바, 네비게이션(위쪽)바, 탭바, 툴바 등에 의해 가려지거나 겹치지 않고 완전히 보여지는 영역.
 
@@ -157,7 +159,7 @@ override func viewDidAppear(_ animated: Bool) {
 }
 ```
 
-### 스토리보드를 이용했을때의 장단점을 설명하시오.
+## 스토리보드를 이용했을때의 장단점을 설명하시오.
 
 **[단점]**
 
@@ -192,7 +194,7 @@ override func viewDidAppear(_ animated: Bool) {
 
 - 제약조건에 오류가 있거나 제약이 유효하지 않을 때 오류를 쉽게 파악할 수 있음.
 
-### 오토레이아웃을 코드로 작성하는 방법은 무엇인가? (3가지)
+## 오토레이아웃을 코드로 작성하는 방법은 무엇인가? (3가지)
 
 — 🔗 [[tistory, nsios] [Swift] AutoLayout 코드작성방법](https://nsios.tistory.com/99)
 
@@ -227,7 +229,7 @@ SnapKit을 사용해 제약을 만들었을 때 조건 충돌하면 콘솔에 �
 
 ③ NSLayoutAnchor : NSLayoutConstraint에 비해 코드 가독성이 좋아짐.
 
-### AutoLayout 최적화
+## AutoLayout 최적화
 
 *— 🔗 [[github.io, hcn1519] AutoLayout 성능 최적화하기](https://hcn1519.github.io/articles/2020-08/autolayout_performance_optimization)* 
 
