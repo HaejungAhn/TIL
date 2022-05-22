@@ -38,8 +38,10 @@ push를 해보면
 - `tip of current branch is behind its remote counterpart.`
 
 
-### 원인
-원인을 이해하려면 fast-forward에 대해 이해하고 있어야 하는데! 오늘은 늦었으니 내일 츄라이~~
+### 원인 - `fast-forward`
+- fast-forward 관계란   
+https://minemanemo.tistory.com/157
+
 
 ### 해결하기
 해결은 비교적 간단한데 pull을 먼저 하고 이후 push를 진행하면 된다.   
