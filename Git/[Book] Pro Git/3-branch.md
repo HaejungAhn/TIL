@@ -1,6 +1,7 @@
 # 3. Git 브랜치
 
 ## [3.1 브랜치란 무엇인가](https://git-scm.com/book/ko/v2/Git-%EB%B8%8C%EB%9E%9C%EC%B9%98-%EB%B8%8C%EB%9E%9C%EC%B9%98%EB%9E%80-%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80)
+[여기](https://backlog.com/git-tutorial/kr/stepup/stepup1_1.html)도 읽어봄.
 
 ### 브랜치란 무엇인가
 - Git이 브랜치를 다루는 과정을 이해하려면 우선 Git이 데이터를 어떻게 저장하는지 알아야 한다.
@@ -17,14 +18,14 @@
 - 커밋을 진행하면 아래와 같은 과정을 거치게 된다.
     1. 커밋되는 파일별 Blob 파일이 생성된다.
     2. 루트 디렉토리와 각 하위 디렉토리의 트리 개체를 체크섬과 함께 저장소에 저장한다. -> 여기서 말하는 디렉토리가 내가 알고있는 파일 디렉토리 말하는건가? 아님 다른 의미를 또 가지고 있는건가?   
-    <img src="./images/3-branch-01.png" width="50%">
+    <img src="./images/3-branch-01.png" width="50%">   
     3. 커밋 개체를 만들고 메타데이터와 <u>루트 디렉토리 트리 개체를 가리키는 포인터 정보</u>(이걸 왜 커밋개체에 같이 넣음??)를 커밋 개체에 넣어 저장한다. -> 그래서 필요하면 언제든지 스냅샷을 다시 만들 수 있다???   
-    <img src="./images/3-branch-02.png" width="50%">
+    <img src="./images/3-branch-02.png" width="50%">   
 
 - 커밋과 이전 커밋
 <div style="text-alignmet: center;">
 <img src="https://git-scm.com/book/en/v2/images/commits-and-parents.png">
-</div>
+</div>   
 
 - Git의 브랜치는 커밋 사이를 가볍게 이동할 수 있는 포인터 같은 것이다.
 - Git의 브랜치는 어떤 한 커밋을 가리키는 40글자의 SHA-1 체크섬 파일에 불과하기 때문에 만들기도 쉽고 지우기도 쉽다. (! 파일 전체를 다시 복사하는게 아니다! 그냥 포인터 같은 개념이다) 새로운 브랜치를 만드는 것은 41바이트 크기의 파일(40자와 줄 바꿈 문자 한개) 하나를 만드는 것에 불과하다.
@@ -32,12 +33,12 @@
 
 ### 새 브랜치 생성하기
 - `git branch testing` -> "testing"이라는 이름을 가진 브랜치를 만들자! (하지만 브랜치를 옮기지는 않는)   
-    <img src="https://git-scm.com/book/en/v2/images/two-branches.png">
+    <img src="https://git-scm.com/book/en/v2/images/two-branches.png">   
 - 가장 마지막 커밋을 master도 가리키고 있고, 방금 만든 "testing"도 가리키는 것을 볼 수 있다.
 - 마지막 커밋을 가리키는 브랜치가 2개 이상일 경우, Git은 현재 작업중인 브랜치가 무엇인지 어떻게 구별할까?
 - `HEAD`라는 특수한 포인터로 이를 구별할 수 있다. 이 것은 <u>지금 작업하는 로컬 브랜치</u>를 가리킨다.
 - `git log --oneline --decorate` 명령어를 이용해 현재 커밋과 해당 커밋을 가리키고 있는 브랜치에는 어떤 것들이 있는지 확인할 수도 있다.
-    <img src="./images/3-branch-log-decorate.png">
+    <img src="./images/3-branch-log-decorate.png">   
     - 위 이미지에 있는 내용을 해석해보면!   
         - `0668802`라는 커밋을 로컬 브랜치인 TEST-1, TEST-2, 원격 브랜치인 TEST-1이 가리키고 있다는 것을 볼 수 있다.
         - 현재 로컬에서 작업중인 브랜치는 TEST-1이라는 것을 알 수 있다.
@@ -45,3 +46,83 @@
 - `git checkout <브랜치명>`
     - checkout한 브랜치가 가리키고 있는 커밋을 `HEAD`가 가리키도록 수정하고
     - 워킹 디렉토리의 파일도 `HEAD`가 가리키는 그 시점으로 변경시킴.
+
+- `git checkout -b <브랜치명>`: 브랜치 만들고 체크아웃 하기
+
+- `git branch -d <브랜치명>` : 브랜치 삭제
+
+
+## [3.2 브랜치와 Merge의 기초](https://git-scm.com/book/ko/v2/Git-%EB%B8%8C%EB%9E%9C%EC%B9%98-%EB%B8%8C%EB%9E%9C%EC%B9%98%EC%99%80-Merge-%EC%9D%98-%EA%B8%B0%EC%B4%88)
+
+### 브랜치로 작업하기
+- 보통 특정 이슈를 해결하거나 hotfix 이슈가 발생하는 경우 master 브랜치를 기반으로 새로운 브랜치를 만들어서 작업하게 된다.
+- 브랜치를 이동하기 위해서는 아직 커밋하지 않은 파일이 체크아웃 할 브랜치와 충돌(파일 내용이 서로 상이한 경우인가?)이 발생하면 안된다. 충돌 발생 시 브랜치를 이동할 수 없다.
+- 따라서 브랜치를 변경하기 전에 워킹 디렉토리를 정리하는 것이 좋으며, Stash나 커밋 Amend를 통해 이런 문제를 다룰 수 있다. 이는 [Stashing과 Cleaning](https://git-scm.com/book/ko/v2/ch00/_git_stashing)에서 다룰 것이다.
+
+### 브랜치 병합(Merge)하기
+- `git merge` 명령어를 이용해 브랜치를 합칠 수 있다.
+
+![master 브랜치에서 갈라져 나온 hotfix, iss53 브랜치](https://git-scm.com/book/en/v2/images/basic-branching-4.png)   
+- 만약 위 그림에서 hotfix 브랜치를 master 브랜치에 합쳐야한다면, master로 체크아웃 후 `git merge hotfix` 명령어를 사용하면 된다. 그럼 아래와 같은 내용이 콘솔에 보여진다.
+    ```Bash
+    Updating f42c576..3a0874c
+    Fast-forward
+    index.html | 2 ++
+    1 file changed, 2 insertions(+)
+    ```
+- 위 내용에서 "**Fast-forward**"라는 키워드가 보일 것이다. hotfix 브랜치가 가리키는 `C4` 커밋이 `C2` 커밋에 기반한 브랜치이기 때문에 <u>브랜치 포인터는 Merge 과정 없이 그저 최신 커밋으로 이동</u>한다. 이런 Merge 방식을 "Fast-forward"라고 부른다.
+![Merge 후 hotfix와 같은 것을 가리키는 master 브랜치](https://git-scm.com/book/en/v2/images/basic-branching-5.png)
+
+
+- hotfix를 master 브랜치에 merge한 이후 iss53 브랜치를 작업하여 아래와 같은 상태가 되었다고 가정하자.   
+![](https://git-scm.com/book/en/v2/images/basic-branching-6.png)
+- 위와 같은 상태에서 iss53 브랜치를 master 브랜치에 merge 하게되면 아래와 같은 내용을 콘솔에서 확인할 수 있다.
+    ```Bash
+    Merge made by the 'recursive' strategy.
+    index.html |    1 +
+    1 file changed, 1 insertion(+)
+    ```
+- hotfix를 Merge 했을 때와는 메세지가 다른데 그 이유는 iss53 브랜치가 가리키는 커밋이 merge할 브랜치의 조상 브랜치가 아니기 때문이다. Git은 이런 경우 Fast-forward로 merge 하지 않는다.
+- 이 경우 git은 merge 대상 브랜치들(iss53, master)이 가리키는 커밋 두개와 두 브랜치의 공통 조상 하나를 사용하여 merge를 진행하며 이를 **3-way Merge**라고 한다.   
+![3-way merge](https://git-scm.com/book/en/v2/images/basic-merging-1.png)
+- fast-forward처럼 단순히 브랜치 포인터를 최신 커밋으로 옮기는게 아니다. <u>3-way merge의 결과를 별도의 커밋으로 만들고 난 이후 해당 브랜치가 그 커밋을 가리키도록 이동</u>시킨다. 그래서 이런 커밋은 부모가 여러개고 **Merge 커밋**이라고 부른다.   
+![Merge 커밋](https://git-scm.com/book/en/v2/images/basic-merging-2.png)
+
+### 충돌의 기초
+- 가끔 3-way Merge가 실패할 때도 있다. Merge하는 두 브랜치에서 같은 파일의 한 부분을 동시에 수정하고 Merge하면 Git은 해당 부분을 Merge하지 못한다.
+- 자동으로 Merge하지 못해 새로운 커밋을 추가하지 못하고, 그래서 브랜치 포인터도 이동시킬 수 없기 때문에 이런 충돌이 발생하는 경우 개발자가 충돌을 해결해야 한다.
+- 어떤 파일이 Merge할 수 없었는지를 살펴보려면 `git status` 명령을 이용한다.
+    ```Bash
+    $ git status
+    On branch master
+    You have unmerged paths.
+    (fix conflicts and run "git commit")
+
+    Unmerged paths:
+    (use "git add <file>..." to mark resolution)
+
+        both modified:      index.html
+
+    no changes added to commit (use "git add" and/or "git commit -a")
+    ```
+    - 충돌이 발생한 파일은 unmerged 상태로 표시된다.
+    - 충돌이 발생한 부분은 아래와 같이 표시된다.
+        ```
+        <<<<<<< HEAD:index.html
+        <div id="footer">contact : email.support@github.com</div>
+        =======
+        <div id="footer">
+        please contact us at support@github.com
+        </div>
+        >>>>>>> iss53:index.html
+        ```
+
+
+## 브랜치 관리
+
+## 브랜치 워크플로
+++ gif flow 내용 정독해보기!
+
+## 리모트 브랜치
+
+## Rebase 하기
