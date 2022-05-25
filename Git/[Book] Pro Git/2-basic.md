@@ -32,8 +32,29 @@
 `git clone https://github.com/Alamofire/Alamofire Alamofire-test`
 
 
+---
+### 상세히 들어가기 전 git에서 파일이 저장되는 곳들을 알아보자!
+<div style="text-align: center">
+    <img src="./images/2-basic.png" width="90%">
+</div>   
 
+- 로컬(working directory 또는 working copy)
+    - 실제 위치는 프로젝트 폴더
+    - 프로젝트 폴더에 존재하는 파일 그 자체를 의미함.
 
+- 인덱스(staging area(대기장소) 또는 cache)
+    - 프로젝트 폴더 하위의 .git/index 파일
+    - 개념적으로는 커밋이 이뤄질 준비가 된 **파일의 내용들**이 위치하는 영역이며, 실제로는 하나의 파일로서 존재한다.
+    - 로컬의 변경사항이 발생했을 경우 git add 명령어를 수행하면 해당 변동사항을 인덱스 영역에 반영시킬 수 있다.
+    - 인덱스 파일에는 **커밋이 이뤄질 준비가 된 파일의 내용들 각각에 대해 파일명과 해당 파일의 내용을 담고 있는 Blob 파일의 주소가 기록**된다.
+        - Blob 파일? Binary Large Object의 약자. 큰 객체를 이진수 형태로 저장한 것.
+
+- 저장소(=repository)
+    - 프로젝트 폴더 하위의 .git/objects/ 폴더
+    - 깃이 버전 관리를 하기 위해 필요로 하는 데이터들을 저장하는 곳. 여기에 저장된 파일들을 오브젝트 파일이라고 부른다.
+    - local과 remote 로 나뉘어진다. 위 설명은 local repository임.
+    - remote repository는 github에 올라가있는 그것!
+---
 
 ## [2.2 수정하고 저장소에 저장하기](https://git-scm.com/book/ko/v2/Git%EC%9D%98-%EA%B8%B0%EC%B4%88-%EC%88%98%EC%A0%95%ED%95%98%EA%B3%A0-%EC%A0%80%EC%9E%A5%EC%86%8C%EC%97%90-%EC%A0%80%EC%9E%A5%ED%95%98%EA%B8%B0)
 ### 파일의 라이프사이클
@@ -400,5 +421,6 @@ v1.8.5로 시작하는 태그 목록 전체 가져올 수 있음. 와일드카�
 origin	https://github.com/kwontaewan/iOS-Clean-Architecture-MVVM-RxSwift.git (fetch)
 origin	https://github.com/kwontaewan/iOS-Clean-Architecture-MVVM-RxSwift.git (push)
 ```
+아래 두 항목은 모두 3.5 Git 브랜치 - 리모트 브랜치에 내용이 나온다. 그때 공부하자~~
 - tracked란 무엇일까?
 - Upstream의 개념은 무엇일까?
