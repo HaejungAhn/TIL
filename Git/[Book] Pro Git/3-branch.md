@@ -143,7 +143,40 @@
 
 
 ## 브랜치 워크플로
-++ gif flow 내용 정독해보기!
+### Long-Running 브랜치
+- 배포했거나 배포할 코드만 master 브랜치에 Merge
+- 개발을 진행하고 안정화하는 브랜치는 develop이나 next라는 이름으로 추가적인 브랜치를 만들어서 사용한다.
+- 브랜치를 이용해 여러 단계에 걸쳐 안정화해 나아가면서 충분히 안정화가 됐을 때 안정 브랜치로 머지함.   
+<div style="text-align:center">
+    <img src="https://git-scm.com/book/en/v2/images/lr-branches-2.png" width="90%">
+</div>   
+
+### 토픽 브랜치
+- 어떤 한가지 주제나 작업을 위해 만든 짧은 호흡의 브랜치다.
+
+### Git flow
+해당 챕터가 git flow를 보기 가장 적절한 챕터가 아닐까 싶어 오늘 살펴본다.   
+🔗  [우아한형제들 기술블로그, 우린 Git-flow를 사용하고 있어요](https://techblog.woowahan.com/2553/)   
+<div style="text-align:center">
+    <img src="https://techblog.woowahan.com/wp-content/uploads/img/2017-10-30/git-flow_overall_graph.png" width="80%">
+</div>   
+
+- Git flow에는 5가지 종류의 브랜치가 존재한다.   
+    - master : 제품으로 출시될 수 있는 브랜치
+    - develop: 다음 출시 버전을 개발하는 브랜치
+    - feature: 기능을 개발하는 브랜치(~~feature에서 작업을 하는동안 develop 브랜치에서 발생하는 변화는 mergeg하지 않는다.~~) develop에 추가된 기능을 feature에 가져와야 할 경우도 있다.
+    - release: 이번 출시 버전을 준비하는 브랜치(develop 브랜치에서 개발을 진행하고 이번 버전에 필요한 기능들이 모두 merge됐을 경우 QA를 위해 release 브랜치를 생성한다. 오로지 버그 픽스만 진행한다.)
+    - hotfix : 출시 버전에서 발생한 버그를 수정하는 브랜치
+- Upstream remote repo를 개발자마다 fork한다는 것도 생소했고 왜 이렇게 하는거지?! 라는 의문이 들었는데 그런 생각이 들자마자 글에서 왜 그렇게 하는지 나옴. 모두가 공유하고 있는 Upstream remote repo에서 새로운 기술을 도입하거나 이것저것 실험하는 것보다는 fork한 Repo에서 더 안정감 있게 실험할 수 있기 때문이라고 한다.
+- 큰 회사라 그런지 feature에도 종류가 있다는 것이 신기하다. (feature-user)
+- 커밋 그래프를 단순하게 가져가는 이유는?   
+    - 여기서는 하나의 ticket 당 하나의 commit이 되도록 내부적으로 약속을 정했기 때문에 티켓 하나 당 업무가 작아야만 한다. 따라서 하나의 기능에 여러개의 티켓이 생성되고, 여러개의 커밋이 생성되는 거임. 그래서 이를 하나의 커밋으로 합친다고 함. 
+    - 또한 커밋 그래프가 복잡해지면 이력 확인이 어렵기 때문에.
+- `git merge –no-ff upstream/develop`
+    - `-no-ff` 옵션 : 현재 브랜치와 merge 대상의 관계가 fast-forward이던 아니던 무조건 Merge 커밋과 같이 merge되는 옵션
+    - merge 커밋? 봤는데 기억이 안난다..! 봤다는 기억만 난다.ㅎㅎ.. 주말에 꼭 복습해야겠다. 
+
+
 
 ## 리모트 브랜치
 
