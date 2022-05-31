@@ -12,17 +12,24 @@ __View__
 - 또한 사용자로부터 이벤트를 받아 이를 Controller에게 전달해주는 역할도 한다.
 
 __Controller__
-- Model과 View 사이를 중개하는 역할.
+- Model과 View 사이를 중개하는 역할. controller의 가장 중요한 역할 중 하나는 model과 view가 서로의 존재를 모르도록 하는 것이다.
 - model로부터 받은 데이터를 view에게 전달하여 데이터가 업데이트될 수 있도록 함.
 - view로부터 이벤트를 받으면 model을 업데이트함.
 - model과 view를 소유하고 있다.
-- view의 생성과 더불어 생명주기도 관리한다.
+
 
 ## 장단점
 __장점__   
 - 가장 기본이 되는 디자인패턴이며 쉽다. 작은 서비스일 경우 적합함.
+- 비즈니스 로직과 룰이 model layer에 캡슐화되어 있다.
 
 __단점__
+- 비즈니스 로직은 캡슐화되어있지만 controller에는 UI와 관련된 로직이 여전히 포함되어 있다.
+    - 비즈니스 로직을 호출하고 그 결과를 view에 바인드
+    - view 요소 관리
+    - model layer로부터 온 데이터를 UI에 맞는 형태로 변형
+    - 화면 이동 로직
+    - UI 상태 관리
 - iOS에서는 View와 Controller간 결합도가 높다. 그래서 unit test가 어렵다.
     - Controller의 역할을 하는 UIViewController가 IBOutlet, IBAction으로 View를 관리
     - Controller가 view의 라이프사이클도 관리
@@ -53,7 +60,7 @@ __View__
 
 __Presenter__
 - Model과 View 사이를 중개하는 역할.
-- Presenter는 Model을 소유하고 있다.
+- UIKit에 의존하지 않는다.
 - View로부터 모든 input을 받아서 적절히 포맷팅 혹은 Model과의 interaction으로 데이터 가져와서 가공 후 이를 View에 넘긴다.
 - 구조상으로 보면 View와 Model은 서로의 존재를 모르는 상태이지만, Presenter가 View에 데이터를 넘길 때 Model에 의존하는게 아닌가 의문이 들었다. 근데 예제를 확인해보니 
 __Model을 이용해 가져온 데이터를 `가공`해서 View로 전달할 때 Presenter에 정의된 새로운 데이터 구조를 사용__
@@ -107,3 +114,4 @@ __단점__
 - [iOS Swfit : MVP Architecture](https://saad-eloulladi.medium.com/ios-swift-mvp-architecture-pattern-a2b0c2d310a3)
 - [iOS MVVM tutorial: Refactoring from MVC from raywenderlich](https://www.raywenderlich.com/6733535-ios-mvvm-tutorial-refactoring-from-mvc)
 - [ios-architecture example](https://github.com/tailec/ios-architecture)
+- [A dubm UI is a good UI: Using MVP in iOS with Swift](http://iyadagha.com/using-mvp-ios-swift/)
