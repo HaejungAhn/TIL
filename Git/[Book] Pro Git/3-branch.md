@@ -179,5 +179,103 @@
 
 
 ## 리모트 브랜치
+- Remote references are references (pointers) in your remote repositories, including branches, tags, and so on.    
+리모트 레퍼런스(Refs)는 브랜치, 태그 등을 포함하는 리모트 레포지토리의 참조(포인터)다.
+
+- `git ls-remote <리모트 저장소 주소>`   
+    - [여기](https://nochoco-lee.tistory.com/30) 참고
+    - 원격 저장소를 `clone`, `fetch` 하지 않고도 해당 저장소의 정보를 조회해볼 수 있음. 요청된 리모트 저장소의 refs/heads와 refs/tags 목록을 표시해준다.
+        <img src="./images/3-ls-remote.png">   
+- `git remote show <리모트 저장소 주소>`
+    - 모든 리모트 브랜치와 그 정보를 보여준다.
+    - `ls-remote`와 비슷하게 show 뒤에 리모트 저장소 주소를 붙였더니 아래와 같은 오류 메세지가 나왔다.   
+        ```Bash
+        fatal: not a git repository (or any of the parent directories): .git
+        ```
+    - 검색해보니 현재 명령어를 수행하는 디렉토리에 .git 폴더가 있어야 한다고 해서 .git 폴더가 만들어진 곳으로 이동 후 다시 동일한 명령어를 입력했더니 결과가 잘 나옴.
+- 리모트 Refs가 있지만 보통은 리모트 트래킹 브랜치를 사용한다.
+
+### 리모트 트래킹 브랜치
+- <u>리모트 브랜치를 추적하는 레퍼런스이며 브랜치다.</u> 일종의 북마크라고 할 수 있다.    
+리모트 저장소에 마지막으로 연결했던 순간에 브랜치가 무슨 커밋을 가리키고 있었는지를 나타낸다.
+- 리모트 트래킹 브랜치는 로컬에 있지만 임의로 움직일 수 없다.(브랜치의 위치를 이동시키거나 할 수 없다는 의미인 것 같다.) 리모트 서버에 연결할 때마다(`git fetch`, `git pull`) 리모트의 브랜치 업데이트 내용에 따라서 자동으로 갱신될 뿐이다.
+- 리모트 트래킹 브랜치의 이름은 `<remote>/<branch>` 형식으로 되어 있다.   
+예를 들어 origin이라는 이름의 리모트 저장소에 있는 master 브랜치를 보고 싶다면 `origin/master`라는 이름으로 브랜치를 확인하면 된다.
+- 다른 팀원과 함께 어떤 이슈를 구현할 때 그 팀원이 `iss53` 브랜치를 서버로 Push했고 당신도 로컬에 `iss53` 브랜치가 있다고 가정하자. 이때 서버의 `iss53`브랜치가 가리키는 커밋은 로컬에서 `origin/iss53`이 가리키는 커밋이다.   
+    - 다른 사람이 develop 브랜치에 push하거나 merge한 변경사항이 (내가 아무것도 하지 않았음에도) 나의 소스트리나 Git-fork 등에 표시되는 경우가 있다.(`↓5` 이런것들!!) 이게 리모트 트래킹 브랜치 덕분이었구나~~
+- 리모트 서버로부터 저장소 정보를 동기화하려면 `git fetch origin` 명령을 사용한다. 이때 과정은 아래와 같다.
+    - 우선 origin 서버의 주소 정보를 찾음.
+    - 로컬 저장소가 갖고 있지 않은 새로운 정보가 있으면 모두 내려받음.
+    - 받은 데이터를 로컬 저장소에 업데이트
+    - `origin/<branch>` 포인터의 위치를 최신 커밋으로 이동시킨다.
+
+
+### 브랜치 추적
+- 리모트 트래킹 브랜치를 로컬 브랜치로 Checkout하면 자동으로 트래킹(Tracking) 브랜치가 만들어진다.
+- 로컬 브랜치 중에서도 리모트 트래킹 브랜치를 Tracking하는 브랜치이다. 트래킹 하는 대상 브랜치를 "Upstream" 브랜치 라고 부른다. (Tracking 브랜치의 Upstream 브랜치는 리모트 트래킹 브랜치!!)
+    ```Bash
+    # github에 올라가있는 git-toy repo로 테스트해봄
+    # 현재 remote에 있는 브랜치는 main, TEST-1이 있음.
+    git checkout origin/TEST-1
+    ## 아래와 같은 메세지가 나옴. 
+    ## detached HEAD 지난번에 나왔던건데!! 
+    ##------
+    "detached HEAD" 상태에서는 작업을 하고 커밋을 만들면, 태그는 그대로 있으나 새로운 커밋이 하나 쌓인 상태가 된다. 그리고 새 커밋에 도달할 수 있는 방법이 따로 없게 된다. 물론 커밋의 해시 값을 정확히 기억하고 있으면 가능하긴 하다. 
+    ##------
+    Note: switching to 'origin/TEST-1'.
+
+    You are in 'detached HEAD' state. You can look around, make experimental changes and commit them, and you can discard any commits you make in this state without impacting any branches by switching back to a branch.
+
+    If you want to create a new branch to retain commits you create, you may do so (now or later) by using -c with the switch command. Example:
+
+    git switch -c <new-branch-name>
+
+    Or undo this operation with:
+
+    git switch -
+
+    Turn off this advice by setting config variable advice.detachedHead to false
+
+    HEAD is now at 0668802 Merge branch 'TEST-1' of https://github.com/HaejungAhn/git-toy into TEST-1
+
+    # 이 상태에서 브랜치를 확인해보면 아래와 같이 나온다. detached HEAD를 확인할 수 있음. 그리고 이 브랜치는 리모트 트래킹 브랜치 origin/TEST-1을 checkout 했기 때문에 트래킹 브랜치라고 말할 수 있다.
+    git branch
+    * (HEAD detached at origin/TEST-1)
+      TEST-1
+      TEST-2
+      main
+    ```
+- 트래킹 브랜치에서 `git pull` 명령을 내리면 리모트 저장소로부터 데이터를 내려받아, <u>연결된 리모트 브랜치와 자동으로 Merge한다.</u>
+    - 테스트를 위해 git-toy의 TEST-1 브랜치에 test3.md 파일을 추가함.
+    - 트래킹 브랜치에서 `git pull`을 해보면 아래와 같이 가져와진 것을 확인할 수 있다!   
+        <img src="./images/3-tracking-branch-git-pull.png">   
+        
+    - "연결된 리모트 브랜치와 자동으로 Merge한다"는게 잘 이해가 안간다.   
+
+- 서버로부터 저장소를 clone하면 git은 자동으로 master 브랜치를 origin/master 브랜치의 트래킹 브랜치로 만든다.(리모트 트래킹 브랜치를 트래킹하는 브랜치)
+- 트래킹 브랜치는 아래 명령어로 만들 수 있다.   
+    - `git checkout -b <branch> <remote>/<branch>`   
+    - 혹은 `--track` 옵션을 사용하여 로컬 브랜치 이름을 자동으로 생성할 수 있다.   
+    `git checkout --track <remote>/<branch>`
+    - 이 명령은 매우 자주 쓰이기 때문에 더 생략할 수도 있다. 입력한 브랜치가 있는 리모트가 딱 하나 있고, 로컬에는 없으면 git은 트래킹 브랜치를 만들어준다.   
+    `git checkout <branch>`
+
+- 트래킹 브랜치에서 push나 pull을 하면 자동으로 `<remote>/<branch>`로 데이터를 보내거나 가져온다. 👉  이게 트래킹 브랜치의 가장 중요한 특징인 것 같은데..!
+
+- 트래킹 브랜치가 어떻게 설정되어 있는지 확인하기 위해서는 `git branch -vv`를 활용한다.   
+    <img src="./images/3-git-branch-vv.png">   
+    - TEST-1 브랜치는 origin/TEST-1 브랜치를 추적하고 있으며, 현재 상태는 리모트보다 한개 뒤에 위치한다는 것(behind 1)을 나타낸다.
+    - TEST-2 브랜치는 트래킹하고 있는 브랜치가 없다.
+    - main 브랜치는 origin/main을 트래킹하며, 로컬에 있는 것이 리모트에 있는 것보다 4개 commit 앞서있다.(ahead 4)
+    - 위 이미지에 나와있는 ahead, behind 정보를 git-fork와 비교해보면 아래와 같음(참고용)   
+        <img src="./images/3-git-branch-vv2.png" width="50%">   
+- 여기서 중요한 점은 명령을 실행했을 때 나타나는 결과는 **모두 서버에서 데이터를 가져온(fetch) 시점을 바탕으로 계산한다는 점**이다. 이 말은 즉, fetch를 하지 않는다면 서버에 있는 실제 데이터와 `git branch -vv`를 통해 확인한 데이터에 차이가 있을 수 있다는 말이다.
+- 따라서 `git fetch --all; git branch -vv` 두 명령어를 함께(순차적으로) 사용하는 것이 좋다.
+
+### 리모트 브랜치 삭제하기
+`git push <remote> --delete <remote 브랜치 이름>` 
+
+
+
 
 ## Rebase 하기
