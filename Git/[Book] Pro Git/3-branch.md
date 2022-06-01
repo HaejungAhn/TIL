@@ -89,6 +89,12 @@
 - fast-forward처럼 단순히 브랜치 포인터를 최신 커밋으로 옮기는게 아니다. <u>3-way merge의 결과를 별도의 커밋으로 만들고 난 이후 해당 브랜치가 그 커밋을 가리키도록 이동</u>시킨다. 그래서 이런 커밋은 부모가 여러개고 **Merge 커밋**이라고 부른다.   
 ![Merge 커밋](https://git-scm.com/book/en/v2/images/basic-merging-2.png)
 
+#### ✋ 3-way merge는 구체적으로 어떻게 이루어질까?
+- [[Git] Merge(3-way merge) 이해하기](https://wonyong-jang.github.io/git/2021/02/05/Github-Merge.html)의 1-1) 3-way merge를 읽어보면 됨. 
+- 정리하자면 공통 조상 브랜치를 기반으로 merge할 두 브랜치의 변경사항을 비교해서 최종 커밋을 만들어내는 것이다.   
+<img src="https://user-images.githubusercontent.com/26623547/133926511-e68926da-893a-4ddf-b576-b660ac8d31d2.png">
+
+
 ### 충돌의 기초
 - 가끔 3-way Merge가 실패할 때도 있다. Merge하는 두 브랜치에서 같은 파일의 한 부분을 동시에 수정하고 Merge하면 Git은 해당 부분을 Merge하지 못한다.
 - 자동으로 Merge하지 못해 새로운 커밋을 추가하지 못하고, 그래서 브랜치 포인터도 이동시킬 수 없기 때문에 이런 충돌이 발생하는 경우 개발자가 충돌을 해결해야 한다.
@@ -277,5 +283,28 @@
 
 
 
-
 ## Rebase 하기
+- 한 브랜치에서 다른 브랜치로 합치는 방법은 두가지가 있다. 하나는 `Merge`이고 하나는 `Rebase`다.
+- rebase는 "base를 새롭게 설정한다"는 의미이다. 3-way merge에서 base 브랜치를 기반으로 merge할 브랜치들의 변경사항을 비교해서 merge하게 되는데 기반이 되는 base 브랜치를 새롭게 설정하겠다는 의미이다.
+
+### Rebase의 기초
+- 일반적으로 하나의 뿌리`C2`에서 두개로 쪼개진 브랜치(각각 `C3`, `C4`라 하겠음)를 merge하는 경우 `C3`와 `C4`, 그리고 두 브랜치의 공통 뿌리인 `C2`을 기반으로 `3-way merge`로 새로운 커밋을 만들어낸다.
+- 비슷한 결과를 만드는 다른 방식으로는, `C3`에서 변경된 사항을 Patch로 만들고 이를 다시 `C4`에 적용시키는 방법이 있다. Git에서는 이런 방식을 `Rebase`라고 한다.   
+<img src="./images/3-rebase-01.png">   
+<img src="./images/3-rebase-02.png">   
+
+- merge하는 경우에는 병합대상이 되는 브랜치가 commit 그래프에 그대로 남아있는 걸 확인할 수 있다.   
+<img src="./images/3-merge-01.png">   
+<img src="./images/3-merge-02.png">   
+
+
+- Rebase는 보통 리모트 브랜치에 커밋을 깔끔하게 적용하고 싶을 때 사용한다.
+- Rebase를 하던 Merge를 하던 최종 결과물은 같다. 단지, 커밋 히스토리만 다르다는 것이 중요하다. rebase는 다른 브랜치의 변경사항을 순서대로 적용하면서 합치고 Merge의 경우 두 브랜치의 최종 결과만을 가지고 합친다.
+
+### Rebase의 위험성
+- 이미 공개 저장소에 Push한 커밋을 Rebase하지 마라.
+- rebase는 기존 커밋을 그대로 사용하는게 아니라 내용은 같지만 다른 커밋을 새로 만든다. 새 커밋을 서버에 Push하고 동료 중 누군가가 그 커밋을 Pull해서 작업을 한다고 하자. 그런데 그 커밋을 git rebase로 바꿔서 Push해버리면 동료가 다시 Push 했을 때 동료는 다시 Merge해야 한다. 그리고 동료가 다시 Merge한 내용을 Pull하면 내 코드는 정말 엉망이 된다. ?? (이어서 봐야 함.)
+---
+👀 읽어볼 거리
+- [Git: Remote Tracking Branch vs. Tracking Branch](http://dogfeet.github.io/articles/2012/git-tracking-vs-remote-tracking.html)
+- [[Git] Merge(3-way merge) 이해하기](https://wonyong-jang.github.io/git/2021/02/05/Github-Merge.html)
