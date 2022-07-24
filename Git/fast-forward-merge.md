@@ -71,11 +71,8 @@ PR을 올리고 팀원들의 확인을 기다리는동안 추가적으로 수정
 - 단, squashed 또는 rebased commit일 경우 fast-forward option을 사용한다.
 
 
-#### <b>Q4-1. squashed는 무엇인가?</b>
-
-#### <b>Q4-2. rebased commit은 무엇인가?</b>
-
-
+#### <b>Q4-1. squash와 rebase merge는 무엇인가?</b>
+- [여기](./rebase-and-merge.md)에 추가적으로 내용을 정리하겠음. 내용이 많다 !
 
 
 ---
