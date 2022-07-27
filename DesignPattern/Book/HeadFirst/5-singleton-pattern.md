@@ -114,6 +114,11 @@ UserDefaults.standard.set("🍎 apple", forKey: "appleName")
 
 - 218p, 클래스 로더, 리플렉션, 직렬화, 역직렬화
 
+#### <b>😽 스터디 이후 공부할 주제들이 생겼다</b>
+- 고차함수에도 lazy를 이용할 수 있다.
+- [reflection](https://zeddios.tistory.com/943)
+- enum을 조금 더 알아봐야겠다. enum에 대한 생각의 전환이 필요해!
+
 ---    
 #### <b>📚  참고 사이트</b>
 - [[Swift] 싱글톤 패턴(Singleton Pattern)](https://dvlpr-chan.tistory.com/36)
