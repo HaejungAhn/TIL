@@ -38,25 +38,25 @@
 
 ```swift
 func fetchThumbnail(for id: String, completion: @escaping (UIImage?, Error?) -> Void) {
-	let request = thumbnailURLRequest(for: id)
-	let task = URLSession.shared.dataTask(with: request { data, response, error in
-		if let error = error {
-			completion(nil, error)
-		} else if (response as? HTTPURLResponse)?.statusCode != 200 {
-			completion(nil, FetchError.badID)
-		} else {
-			guard let image = UIImage(data: data!) else {
-				return
-			}
-			image.prepareThumbnail(of: CGSize(width: 40, height: 40)) {thumbnail in
-				guard let thumbnail = thumbnail else {
-					return
-				}
-				completion(thumbnail, nil)
-			}
+    let request = thumbnailURLRequest(for: id)
+    let task = URLSession.shared.dataTask(with: request { data, response, error in
+	if let error = error {
+	    completion(nil, error)
+	} else if (response as? HTTPURLResponse)?.statusCode != 200 {
+	    completion(nil, FetchError.badID)
+	} else {
+	    guard let image = UIImage(data: data!) else {
+		return
+	    }
+	    image.prepareThumbnail(of: CGSize(width: 40, height: 40)) {thumbnail in
+		guard let thumbnail = thumbnail else {
+		    return
 		}
+		completion(thumbnail, nil)
+	    }
 	}
-	task.resume()
+    }
+    task.resume()
 }
 ```
 
@@ -79,27 +79,27 @@ func fetchThumbnail(for id: String, completion: @escaping (UIImage?, Error?) -> 
 
 ```swift
 func fetchThumbnail(for id: String, completion: @escaping (UIImage?, Error?) -> Void) {
-	let request = thumbnailURLRequest(for: id)
-	let task = URLSession.shared.dataTask(with: request { data, response, error in
-		if let error = error {
-			completion(nil, error)
-		} else if (response as? HTTPURLResponse)?.statusCode != 200 {
-			completion(nil, FetchError.badID)
-		} else {
-			guard let image = UIImage(data: data!) else {
-				**completion(nil, FetchError.badImage)**
-				return
-			}
-			image.prepareThumbnail(of: CGSize(width: 40, height: 40)) {thumbnail in
-				guard let thumbnail = thumbnail else {
-					**completion(nil, FetchError.badImage)**
-					return
-				}
-				completion(thumbnail, nil)
-			}
+    let request = thumbnailURLRequest(for: id)
+    let task = URLSession.shared.dataTask(with: request { data, response, error in
+	if let error = error {
+	    completion(nil, error)
+	} else if (response as? HTTPURLResponse)?.statusCode != 200 {
+	    completion(nil, FetchError.badID)
+	} else {
+	    guard let image = UIImage(data: data!) else {
+	    	completion(nil, FetchError.badImage)
+		return
+	    }
+	    image.prepareThumbnail(of: CGSize(width: 40, height: 40)) {thumbnail in
+		guard let thumbnail = thumbnail else {
+	    	completion(nil, FetchError.badImage)
+		    return
 		}
+		completion(thumbnail, nil)
+	    }
 	}
-	task.resume()
+    }
+    task.resume()
 }
 ```
 
@@ -121,31 +121,32 @@ Swift에게 있어 completion handler는 그저 클로저일 뿐이다. completi
 
 ```swift
 func fetchThumbnail(for id: String, completion: @escaping (UIImage?, Error?) -> Void) {
-	let request = thumbnailURLRequest(for: id)
-	let task = URLSession.shared.dataTask(with: request { data, response, error in
-		if let error = error {
-			**completion(.failure(error))**
-		} else if (response as? HTTPURLResponse)?.statusCode != 200 {
-			**completion(.failure(FetchError.badID))**
-		} else {
-			guard let image = UIImage(data: data!) else {
-				**completion(.failure(FetchError.badImage))**
-				return
-			}
-			image.prepareThumbnail(of: CGSize(width: 40, height: 40)) {thumbnail in
-				guard let thumbnail = thumbnail else {
-					**completion(.failure(FetchError.badImage))**
-					return
-				}
-				**completion(.success(thumbnail))**
-			}
+    let request = thumbnailURLRequest(for: id)
+    let task = URLSession.shared.dataTask(with: request { data, response, error in
+	if let error = error {
+	    completion(.failure(error))
+	} else if (response as? HTTPURLResponse)?.statusCode != 200 {
+	    completion(.failure(FetchError.badID))
+	} else {
+	    guard let image = UIImage(data: data!) else {
+	    	completion(.failure(FetchError.badImage))
+		return
+	    }
+	    image.prepareThumbnail(of: CGSize(width: 40, height: 40)) {thumbnail in
+		guard let thumbnail = thumbnail else {
+	    	completion(.failure(FetchError.badImage))
+		    return
 		}
+		completion(.success(thumbnail))
+	    }
 	}
-	task.resume()
+    }
+    task.resume()
 }
+
 ```
 
-조금 더 안전해지긴 했지만 의례적인 것들이 추가되어(it also added ceremony) 우리 코드를 못생기게, 약간 길게 만든다.
+조금 더 안전해지긴 했지만 의례적인 코드들이 추가되어(it also added ceremony) 우리 코드를 못생기게, 약간 길게 만든다.
 
 <br>
 
@@ -155,15 +156,15 @@ simple, easy, safe(caller에게 성공했든 실패했든 항상 작업 종료�
 
 ```swift
 func fetchThumbnail(for id: String) async throws -> UIImage {
-	let request = thumbnailURLRequest(for: id)
-	// URLSession의 dataTask와 달리 data 메소드는 awaitable하다. 둘다 Foundation에서 제공하며 비동기로 동작한다.
-	// 이전버전에서는 에러를 체크하고 명시적으로 completion handler를 호출하는 작업들이 많았는데,
-	// 현재 버전에서는 이런 작업들이 try 안에 녹아있다.
-	let (data, response) = **try await** URLSession.shared.data(for: request)
-	guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw FetchError.badID }
-	let maybeImage = UIImage(data: data)
-	guard let thumbnail = await maybeImage?.thumbnail else { throw FetchError.badImage }
-	return thumbnail
+    let request = thumbnailURLRequest(for: id)
+    // URLSession의 dataTask와 달리 data 메소드는 awaitable하다. 둘다 Foundation에서 제공하며 비동기로 동작한다.
+    // 이전버전에서는 에러를 체크하고 명시적으로 completion handler를 호출하는 작업들이 많았는데,
+    // 현재 버전에서는 이런 작업들이 try 안에 녹아있다.
+    let (data, response) = **try await** URLSession.shared.data(for: request)
+    guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw FetchError.badID }
+    let maybeImage = UIImage(data: data)
+    guard let thumbnail = await maybeImage?.thumbnail else { throw FetchError.badImage }
+    return thumbnail
 }
 ```
 
@@ -187,8 +188,8 @@ func fetchThumbnail(for id: String) async throws -> UIImage {
     extension UIImage {
     	var thumbnail: UIImage?
     	get async {
-    		let size = CGSize(width: 40, height: 40)
-    		return await self.byPreparingThumbnail(ofSize: size)
+	    let size = CGSize(width: 40, height: 40)
+	    return await self.byPreparingThumbnail(ofSize: size)
     	}
     }
     ```
@@ -199,8 +200,8 @@ func fetchThumbnail(for id: String) async throws -> UIImage {
     - AsyncSequence의 예제코드
         ```swift
         for await id in staticImageIDsURL.lines {
-        	let thumbnail = await fetchThumbnail(for: id)
-        	collage.add(thumbnail)
+	    let thumbnail = await fetchThumbnail(for: id)
+	    collage.add(thumbnail)
         }
         let result = await collage.draw()
         ```
@@ -253,7 +254,7 @@ func fetchThumbnail(for id: String) async throws -> UIImage {
         
         ```swift
         Task {
-        	self.image = try? await self.viewModel.fetchThumbnail(for: post.id)
+	    self.image = try? await self.viewModel.fetchThumbnail(for: post.id)
         }
         ```
         
@@ -268,8 +269,7 @@ func fetchThumbnail(for id: String) async throws -> UIImage {
 
     ```swift
     @available(iOS 15.0, *)
-    func data( for request: URLRequest,
-    				   delegate: URLSessionTaskDelegate? = nil) async throws -> (Data, URLResponse
+    func data(for request: URLRequest, delegate: URLSessionTaskDelegate? = nil) async throws -> (Data, URLResponse
     )
     ```
     
