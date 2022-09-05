@@ -21,12 +21,14 @@ Structured Concurrency는 Structured Programming(이하 구조적 프로그래�
 
 - 기존 비동기 코드에서는 구조적 프로그래밍을 적용하기 쉽지 않다. completion handler 안에서 에러 핸들링을 사용할 수 없고 반복문을 사용할 수 없기 때문이다.   
 
-    <img src="./images/structured-concurrency-01.png" text-align="center" width="90%">   
+    <p align="center"><img src="./images/structured-concurrency-01.png" text-align="center" width="70%"></p>   
+
     - error handling을 사용할 수 없는 것과 structured programming은 어떤 연관관계가 있는 걸까?
 
 - 하지만 async, awiat의 도입으로 구조적 프로그래밍을 적용할 수 있게 됐다.   
 
-    <img src="./images/structured-concurrency-02.png" text-align="center" width="90%"> 
+    <p align="center"><img src="./images/structured-concurrency-02.png" text-align="center" width="70%"></p> 
+
     - 내부적으로 반복문을 사용할 수 있게 됐으므로 재귀적 호출을 피할 수 있으며, 에러 핸들링 역시 가능하다.
 
 <br>
@@ -41,7 +43,7 @@ Structured Concurrency는 Structured Programming(이하 구조적 프로그래�
     
 
 ## Task
-<img src="./images/task-in-swift.png" text-align="center" width="90%">   
+<img src="./images/task-in-swift.png" text-align="center" width="50%">
 
 - Task는 **코드를 concurrency하게 실행시키기 위해 새로운 async 컨텍스트를 제공**한다.
 - Swift 컴파일러는 concurrency 버그를 막기 위해 Task의 사용을 체크한다.
@@ -51,7 +53,7 @@ Structured Concurrency는 Structured Programming(이하 구조적 프로그래�
 
 여러 종류의 Task가 있는데 각각의 용도와 허용 가능한 유연성의 정도가 다르다. 하나씩 살펴보도록 하자.
 - async-let binding
-- group task
+- task group(== group task)
 - unstructured task
 - detached task
 
@@ -66,14 +68,13 @@ Structured Concurrency는 Structured Programming(이하 구조적 프로그래�
 let result = URLSession.shared.data(...)
 ```
 
-오른쪽에 initializer expression, 왼쪽에 변수 이름으로 구성된다.    
-이걸 염두에 두고 아래 내용을 보자.
+오른쪽에 initializer expression, 왼쪽에 변수 이름으로 구성된다. 이걸 염두에 두고 아래 내용을 보자.
 
 <br>
 
 ### Sequential bindings
 
-<img src="./images/sequential-bindings.png" text-align="center" width="90%">   
+<p align="center"><img src="./images/sequential-bindings.png" text-align="center" width="70%"></p>   
 
 ① 오른쪽에 있는 initializer expression이 먼저 실행된다. 
 
@@ -89,7 +90,7 @@ let result = URLSession.shared.data(...)
 
 ### Concurrent bindings
 
-<img src="./images/concurrent-bindings.png" text-align="center" width="90%">   
+<p align="center"><img src="./images/concurrent-bindings.png" text-align="center" width="70%"></p>   
 
 ① concurrent binding을 평가(evaluating)하기 위해 **Swift는 먼저 새로운 child Task를 만든다.**   
 이 child task는 해당 task가 생성된 상위 task의 child가 된다.(parent-child 관계가 만들어짐)
@@ -102,10 +103,12 @@ let result = URLSession.shared.data(...)
 - 그러다가 `result` 의 실제 값이 필요한 곳에 도달하게 되면, parent는 child task의 완료를 await(기다림) 하게 된다. 그래서 위 이미지 가장 하단에 있는 `result` 앞에 await 키워드가 붙은 것이다.
 - 이 예제에서 URLSession에 대한 호출은 에러를 throw할 수도 있다. 이 말은 즉, `result` 에 들어갈 수 있는 게 실제 “값"이 될 수도 있지만 오류가 될 수도 있다는 말이다. 그래서 앞에 try await를 붙여준다.
 
+<br>
+
 위 흐름을 코드로 구현해보면 아래와 같다.   
 *— 아래 코드의 시나리오는 서로 다른 API를 호출하는 경우에 해당된다.*
 
-<img src="./images/async-let.png" text-align="center" width="90%">   
+<p align="center"><img src="./images/async-let.png" text-align="center" width="70%"></p>   
 
 - 원래 URLSession 부분에 try await을 붙여줬는데 이 경우 하나의 다운로드가 완료될 때까지 함수의 실행 자체가 suspend되어 버린다.
 - 다른 작업을 이어서 진행할 수 있도록 try await 대신 async-let binding을 사용하도록 만들었다.
@@ -134,7 +137,8 @@ Task Tree는 Parent Task와 그들의 Child간 link로 구성된다. 이 link는
 
 <br>
 
-<img src="./images/async-let.png" text-align="center" width="90%">   
+<p align="center"><img src="./images/async-let.png" text-align="center" width="70%"></p>   
+
 fetchOneThumbnail()의 코드를 다시 한번 확인해보자.   
 
 위 코드의 try await 부분을 보면 metadata를 먼저 기다리고, 그 다음에 이미지 데이터를 기다리도록(await) 되어 있다. 
@@ -151,7 +155,7 @@ Task를 Cancellation으로 표시하더라도 작업이 즉시 중단되는 것�
 
 메소드를 빠져나가기 전 기다림이 필요한 이유가 바로 이것 때문이다.
 
-<img src="./images/cancellation-propagate.png" text-align="center" width="90%">   
+<p align="center"><img src="./images/cancellation-propagate.png" text-align="center" width="70%"></p>   
 
 이 guarantee가 structured concurrency의 근본적인 동작과정이 된다.
 
@@ -176,11 +180,11 @@ Cancellation이 cooperative하다는 것은 아래와 같다.
 - Cancellation을 고려한 예제 코드는 아래와 같다.   
     ① Task.checkCancellation() - Task가 취소됐는지 확인하고 취소됐다면 Error를 Throw한다.   
 
-    <img src="./images/task-checkCancellation.png" text-align="center" width="90%">   
+    <p align="center"><img src="./images/task-checkCancellation.png" text-align="center" width="70%"></p>   
 
     ② Task.isCancelled - Task가 취소됐는지 확인하고 Bool 값을 리턴한다. 이 경우 (아래와 같은 코드에서) 부분적인 결과를 리턴할 수도 있기 때문에 API에 이런 내용들을 명확하게 명시해둬야 한다.   
 
-    <img src="./images/task-isCancelled.png" text-align="center" width="90%">  
+    <p align="center"><img src="./images/task-isCancelled.png" text-align="center" width="70%"></p>  
 
 <br>
 <br>        
@@ -192,7 +196,7 @@ Structured Concurrency의 한 종류로 고정되지 않은 수의 concurrency�
 
 아래 코드를 다시 한번 보자.
 
-<img src="./images/group-tasks-01.png" text-align="center" width="90%">   
+<p align="center"><img src="./images/group-tasks-01.png" text-align="center" width="70%"></p>   
 
 async-let으로 만들어진 Task의 스코프는 변수 바인딩과 유사하다. 
 
@@ -231,7 +235,7 @@ func withThrowingTaskGroup<ChildTaskResult, GroupResult>(
 
 <br>
 
-<img src="./images/group-tasks-02.png" text-align="center" width="90%">   
+<p align="center"><img src="./images/group-tasks-02.png" text-align="center" width="70%"></p>   
 
 - of 매개변수는 Child Task를 실행하고 리턴 받을 결과의 타입을 지정한다.
 - 후행 클로저에 있는 `group` 은 TaskGroup<ChildTaskResult> 타입이다.
@@ -247,7 +251,7 @@ func withThrowingTaskGroup<ChildTaskResult, GroupResult>(
 
 하지만 위 코드는 문제가 있다. 빌드를 해보면 컴파일러가 data race 이슈가 있음을 알려주고 있기 때문이다.
 
-<img src="./images/data-race.png" text-align="center" width="90%">   
+<p align="center"><img src="./images/data-race.png" text-align="center" width="70%"></p>   
 
 - Child Task는 여러개인데 각각이 하나의 Dictionary안에 썸네일을 넣고 있다. 이 Dictionary는 한번에 여러개의 access를 처리할 수 없기 때문에 문제가 발생한다. 또한 두개의 Task가 썸네일을 동시에 추가하려고 하는 경우 Crash가 발생하거나 Data Corruption이 발생할 가능성이 있다.
 
@@ -267,10 +271,11 @@ func withThrowingTaskGroup<ChildTaskResult, GroupResult>(
 
 - Data Race 문제를 개선한 코드는 아래와 같다.   
 
-<img src="./images/fix-data-race.png" text-align="center" width="90%">   
-    - `withThrowingTaskGroup` 의 of 매개변수를 보면 타입이 `Void`에서 `(String, UIImage)`의 튜플로 변경된 것을 알 수 있다.
-    - `group`은 `TaskGroup<ChildTaskResult>` 타입이다. 위 이미지에 표시된 `(id, thumbnail) in group` 을 보고 헷갈리지 말자.
-    - group의 Child Task들의 결과를 모으기 위해 `for-await-in` 구문을 활용한다.
+<p align="center"><img src="./images/fix-data-race.png" text-align="center" width="70%"></p>   
+
+- `withThrowingTaskGroup` 의 of 매개변수를 보면 타입이 `Void`에서 `(String, UIImage)`의 튜플로 변경된 것을 알 수 있다.
+- `group`은 `TaskGroup<ChildTaskResult>` 타입이다. 위 이미지에 표시된 `(id, thumbnail) in group` 을 보고 헷갈리지 말자.
+- group의 Child Task들의 결과를 모으기 위해 `for-await-in` 구문을 활용한다.
 
 <br>
 <br>
@@ -291,7 +296,7 @@ Task Tree 규칙의 구현과 관련하여 async-let과 Task group에는 약간�
 
 프로그램에 task를 추가하기 위해서 항상 계층구조가 필요한 것은 아니다.
 
-<img src="./images/when-need-unstructured.png" text-align="center" width="90%">   
+<p align="center"><img src="./images/when-need-unstructured.png" text-align="center" width="70%"></p>   
 
 Task가 명확한 계층 구조에 속하지 않을 수 있는 상황이 많이 있다. 가장 명백한 경우 중 하나는 non-async 코드에서 비동기 연산을 수행하는 작업을 시작하려는 경우다. 이 경우 parent task가 전혀 없을 수 있다.
 
@@ -307,13 +312,13 @@ UI작업은 메인 스레드에서 실행되어야 하며, Swift Actor 세션에
 
 UICollectionView의 아이템이 화면에 display될 때 네트워크로부터 썸네일을 가져오기 위해 fetchThumbnails() 함수를 이용하려고 한다.
 
-<img src="./images/unstructured-concurrency-01.png" text-align="center" width="90%">   
+<p align="center"><img src="./images/unstructured-concurrency-01.png" text-align="center" width="70%"></p>   
 
 문제는 delegate 메소드는 비동기 메소드가 아니기 때문에 async 함수에 대한 호출을 await할 수 없다.
 
 어떻게 하면 이 작업이 UI priority를 가지면서 main actor에서 실행되도록 할 수 있을까? 바로 이런 경우에 Unstructured Task를 만들어야 한다.
 
-<img src="./images/unstructured-concurrency-02.png" text-align="center" width="90%">   
+<p align="center"><img src="./images/unstructured-concurrency-02.png" text-align="center" width="70%"></p>   
 
 - Main Thread에서 위 코드가 실행되다가 Task를 생성하는 코드에 도달하게 되면 Swift는 원래 스코프와 동일한 Actor에서 코드가 실행되도록 schedule한다.
 - 그러는 동안 컨트롤은 즉시 caller에게 리턴된다. 썸네일 작업은 delegate method에서 메인 스레드를 즉시 차단하지 않고 opening하면 main thread에서 실행된다.
@@ -321,7 +326,7 @@ UICollectionView의 아이템이 화면에 display될 때 네트워크로부터 
 - 그러나 새로운 Task는 스코프가 지정되지 않는다. 새로운 task의 스코프는 해당 task가 런치된 곳에 묶이지 않는다. origin(task가 시작되는 곳)이 심지어 async일 필요도 없다.
 - 이러한 flexibility를 얻는 대신, 우리는 structured concurrency가 자동으로 관리해주던 것들을 수동으로 관리해야 한다. cancellation과 에러가 자동으로 전파되지 않으며, 우리가 명시적으로 처리하지 않으면 task의 결과가 암시적 awaited되지도 않는다.
 
-    <img src="./images/unstructured-task-01.png" text-align="center" width="90%">   
+    <p align="center"><img src="./images/unstructured-task-01.png" text-align="center" width="70%"></p>   
     
 <br>
 
@@ -329,14 +334,14 @@ UICollectionView의 아이템이 화면에 display될 때 네트워크로부터 
 
 - 우선 Task를 만들고 나서 얻은 값을 저장해보도록 하자. 우리는 task를 생성할 때 값을 row index로 keyed된 딕셔너리에 저장할 수 있다. 따라서 task를 취소할 때 이를 활용할 수 있다.
 
-    <img src="./images/unstructured-task-02.png" text-align="center" width="90%">   
+    <p align="center"><img src="./images/unstructured-task-02.png" text-align="center" width="70%"></p>   
     
     - defer가 들어간 이유는 task 취소 시 이미 finish된 task까지 cancellation하지 않도록 하기 위함임.
     - 컴파일러에 의한 data race flagged 없이 동일한 dictionary(thumbnailTasks)를 비동기 Task의 안과 밖에서 접근할 수 있다.
     - 우리의 delegate 클래스는 MainActor에 묶여있고 새로운 Task는 이를 상속받기 때문에 이들은 절대 병렬적으로 실행될 수 없다. 그래서 오류 없이 사용 가능한 것.
     - 우리는 data race에 대한 걱정 없이 해당 task 안에서 안전하게 main actor-bound 클래스들의 저장 프로퍼티에 접근할 수 있다.
 
-    <img src="./images/unstructured-task-03.png" text-align="center" width="90%">   
+    <p align="center"><img src="./images/unstructured-task-03.png" text-align="center" width="70%"></p>   
     
     - 만약 delegate가 나중에 같은 table row가 화면에서 사라졌다는 것을 알려주면 value에 대한 cancel 메소드를 호출하여 task를 취소할 수 있다.
     
@@ -347,7 +352,7 @@ UICollectionView의 아이템이 화면에 display될 때 네트워크로부터 
 <br>
 
 ## Detached tasks
-<img src="./images/detached-task-01.png" text-align="center" width="90%">   
+<p align="center"><img src="./images/detached-task-01.png" text-align="center" width="70%"></p>   
 
 이름에서 알 수 있듯 해당 Task는 그들의 context로부터 독립적이다. 이것들은 unstructured task에 해당되긴 한다. 이 task들의 라이브타임은 originating 스코프에 묶여 있지 않다. 또한 원래 스코프의 어떠한 속성도 상속받지 않는다. 우선순위를 비롯한 다른 속성들을 컨트롤하기 위해 옵셔널한 매개변수를 제공한다.
 
@@ -355,17 +360,17 @@ UICollectionView의 아이템이 화면에 display될 때 네트워크로부터 
 
 코드로 위 시나리오를 구현해보자.
 
-<img src="./images/detached-task-02.png" text-align="center" width="90%">   
+<p align="center"><img src="./images/detached-task-02.png" text-align="center" width="70%"></p>   
 
 Detached task 안에서 structured concurrency를 활용할 수도 있다.
 
-<img src="./images/detached-task-03.png" text-align="center" width="90%">   
+<p align="center"><img src="./images/detached-task-03.png" text-align="center" width="70%"></p>   
 
 이렇게 하면 structured concurrency의 장점들을 활용할 수 있다.
 
 cacellation의 전파, 부모 task의 속성을 child가 상속
 
-<img src="./images/detached-task-04.png" text-align="center" width="90%">   
+<p align="center"><img src="./images/detached-task-04.png" text-align="center" width="70%"></p>   
 
 <br>
 <br>
@@ -373,7 +378,8 @@ cacellation의 전파, 부모 task의 속성을 child가 상속
 
 ## Flavors of tasks
 
-<img src="./images/task-types.png" text-align="center" width="90%">   
+<p align="center"><img src="./images/task-types.png" text-align="center" width="70%"></p>   
 
 ---
-이렇게 정리를 해도 머리에 남는게 없는 느낌이다. 뭐가 문제일까? 글을 영어에서 한글로 옮기긴 했지만 거기에 너무 신경쓰느라 글을 이해하지는 못한 것 같다는 생각이 들기도 한다. 마인드맵을 그려둬야 겠다. 빨리 아이패드 사야지 !
+~~이렇게 정리를 해도 머리에 남는게 없는 느낌이다. 뭐가 문제일까? 글을 영어에서 한글로 옮기긴 했지만 거기에 너무 신경쓰느라 글을 이해하지는 못한 것 같다는 생각이 들기도 한다. 마인드맵을 그려둬야 겠다. 빨리 아이패드 사야지 !~~   
+전체적인 내용을 필기해보니 정리가 된다. 앞으로는 영상 가볍게 보기 -> 정리하며 보기 -> 손으로 필기하며 내용 리마인드 의 절차를 거쳐야겠다.
