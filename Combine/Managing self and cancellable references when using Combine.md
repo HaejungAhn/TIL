@@ -183,8 +183,70 @@ class ModelLoader<Model: Decodable>: ObservableObject {
 
 <br>
 
-새로운 단어
+## 새로운 단어
 
-- ObservableObject
+### [ObservableObject](https://developer.apple.com/documentation/combine/observableobject)
+
+object가 변경되기 전에 emit하는 publisher가 붙어있는 타입이다.
+
+```swift
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+public protocol ObservableObject : AnyObject {
+    /// The type of publisher that emits before the object has changed.
+    associatedtype ObjectWillChangePublisher : Publisher = ObservableObjectPublisher where Self.ObjectWillChangePublisher.Failure == Never
+
+    /// A publisher that emits before the object has changed.
+    var objectWillChange: Self.ObjectWillChangePublisher { get }
+}
+```
+
+- 기본적으로 ObservableObject는 자기가 소유하고 있는 `@Published` 프로퍼티들의 값이 변경되기 전에 ~~기존 값을~~ emit하는 objectWillChange publisher를 합성(synthesizes)한 것이다. (willSet 시점에 emit 되는 것이라고 이해함)
+    - 🤔 `@Published` 값이 여러개면 여러번 emit 되는건가?<br>ㄴㄴ 가지고 있는 `@Published` 프로퍼티 중 한개의 값이 변경되면 소유하고 있는 `@Published`가 여러개더라도 한번만 호출된다.
+        
+    - 근데 한번의 메소드 호출로 여러개의 `@Published` 프로퍼티가 변경된다면(아래 코드처럼) 여러번 호출된다.
+        ```swift
+        class Contact: ObservableObject {
+            @Published var name: String
+            @Published var age: Int
+        
+            func change(name: String, age: Int) {
+        	    self.name = name
+        	    self.age = age
+            }
+        }
+        ..생략..
+        let john = Contact()
+        john.change(name: "Chris", age: 32)
+        // 위와 같이 호출할 경우 emit이 두번됨. name 변경되기 직전에 한번, age 변경되기 직전에 한번.
+        ```
+        
+- 사용예는 다음과 같다.
+    
+    ```swift
+    class Contact: ObservableObject {
+        
+        @Published var name: String
+        @Published var age: Int
+    
+        init(name: String, age: Int) {
+            self.name = name
+            self.age = age
+        }
+    
+        func haveBirthday() -> Int {
+            age += 1
+            return age
+        }
+    }
+    
+    let john = Contact(name: "John Appleseed", age: 24)
+    let cancellable = john.objectWillChange.sink { something in
+        print(something) // print 찍어보면 Void 타입임.
+        print("\(john.age) will change")
+    }
+    
+    print(john.haveBirthday())
+    // @ObservedObject를 사용하는 방법도 있는데 조금 더 찾아봐야할듯.
+    ```
 - Timer.publish().autoconnect()
-- bookkeeping code
+이걸 알려면 ConnectablePublisher에 대해 알아야 함.
