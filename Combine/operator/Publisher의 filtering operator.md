@@ -46,7 +46,7 @@ print("\n========")
  compactMap(_:) : element를 전달받으면 클로저를 호출하고 ~~값이 있는 반환된 optional을 게시한다.~~ 값이 있는 것을 선택적으로 리턴한다 아닐까..?! ?? Swift standard library에서는 compactMap을 하면 nil이 제거되지 않았나,,? 해석을 잘못했나?
  > Calls a closure with each received element and publishes any returned optional that has a value.
  
- 근데 정의된 시그니처를 보면 옵셔널 풀어서 리턴해주는 것 같긴한데..
+ 근데 정의된 시그니처를 보면 옵셔널 제외하고 값이 있는 것만 리턴해주는 것 같긴한데..
  `func compactMap<T>(_ transform: @escaping (Self.Output) -> T?) -> Publishers.CompactMap<Self, T>`
  result는 클로저 호출 후 nil이 아닌 값을 선택적으로 리턴함.
  
