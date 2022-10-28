@@ -7,7 +7,7 @@ import Combine
 var cancellables = Set<AnyCancellable>()
 
 // reduce는 "줄이다"라는 의미를 가지고 있음. reducing 함수들은 collection의 값을 하나로 만들어주는 역할을 한다.
-print("\n=======collect")
+print("\n=======collect ")
 /*
  collect() : 전달받은 모든 elements를 모은 후 업스트림 publisher가 종료됐을 때 collection의 단일 array로 이 값들을 방출한다. 즉 element를 하나로 모아서 게시하는거네. 중요한 것은 '모은다'는 것과 '업스트림 publisher가 정상적으로 종료됐을 때에만 값을 방출한다'는 것!
  `func collect() -> Publishers.Collect<Self>`
