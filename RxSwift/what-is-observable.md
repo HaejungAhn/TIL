@@ -2,18 +2,19 @@
 <details>
 <summary>처음 공부한 내용</summary>
 <div markdown="1">
+
 - 사전적 정의 : 관찰 가능한
 - 제네릭 "타입"이다.
 - Swift에서 어떤 정수형 프로퍼티를 관찰하겠다고 한다면, Property Observer를 활용할 수 있을 것이다.
-    
-    ```swift
-    var number: Int = 0 {
-    	willSet { /* number에 값이 세팅되기 직전 */ }
-    	didSet {  /* number에 값이 세팅되고 난 이후 */ }
-    }
-    ```
-    
-    Rx에서도 별도로 “관찰하는 방법"이 만들어져 있는데 그게 바로 `Observable`이다.
+
+```Swift
+var number: Int = 0 {
+    willSet { /* number에 값이 세팅되기 직전 */ }
+    didSet {  /* number에 값이 세팅되고 난 이후 */ }
+}
+```
+
+- Rx에서도 별도로 “관찰하는 방법"이 만들어져 있는데 그게 바로 `Observable`이다.
     
     > *ReactiveX에서 Observer는 Observable을 구독한다. Observable이 방출(emit)하는 하나 또는 연속된 항목에 Observer는 반응한다.*
     > 
@@ -77,6 +78,13 @@ checkArrayObservable(items: [4, 3, 1, 2, 0, 5])
 - [RxSwift 기본 익히기 (1) — 10 분짜리 (updated)](https://trilliwon.medium.com/rxswift-기본-익히기-1-d4d77ce63ca8)   
 - [Reactive Programming? Functional Reactive Programming? Reactive Extensions?](https://brunch.co.kr/@oemilk/79)
 
+<br>
+
+**2022.11.11 내용 추가**
+- `Observable`은 단방향이다. 이벤트를 방출할 수는 있지만 subject나 relay가 next, accept 등의 메소드를 통해 이벤트를 받을 수 있는 것과 달리 Observable은 이벤트를 받을 수 없다.(read only)
+    - 그래서 asObservable을 쓰는듯? 이벤트 데이터를 받을 수 없으니까 외부에서 조작할 수가 없는거지 !
+- Observer는 Observable과는 반대로 이벤트를 받을 수는 있지만 방출할 수는 없다.
+- 그래서 이 두가지 특성을 모두 가지는 Subject와 Relay가 존재함.
 ---
 ## Observables aka Sequences
 - 우선 Rx와 Reactive Programming에 대해 다시 짚고 넘어가자면...

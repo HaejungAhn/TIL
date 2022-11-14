@@ -15,3 +15,43 @@
         
     
 - subscribe이외에도 interval, just, take 등 다양한 operator가 있다.
+
+<br>
+
+### [withUnretained](https://github.com/ReactiveX/RxSwift/blob/main/RxSwift/Observables/WithUnretained.swift)
+ObservableType에서 사용할 수 있다. 유지되지 않고(unretained) safe(암시적으로 언래핑하지 않는)한 개체에 대한 참조와 더불어 시퀀스에 의해 방출된 이벤트를 사용할 수 있도록 만들어준다.<br>
+해당 오퍼레이터를 사용해 참조한 object와 이벤트 elemet가 방출된다.<br>
+```Swift
+// 아래 owner는 self를 가리킴.
+someRelay
+.withUnretained(self)
+.subscribe(onNext: { owner, sectionHeaders in
+    owner.tableViewSectionHeaderTypes = sectionHeaders
+})
+```
+
+<br>
+
+### subscribe와 do
+- `subscribe`
+    - <u>구독하기 위한 것</u> 
+    - cold observable의 경우 subscribe되기 전까지는 이벤트가 방출되지 않기 때문에 구독이 필수임.
+    - `onNext`, `onError`, `onCompleted`, `onDisposed`
+- `do`
+    - <u>발생되는 요소를 수정하지 않고 그저 전달만 함</u>
+    - PrimitiveSequenceType 확장에 정의되어 있는데 이벤트에 대한 작업을 호출하고 시퀀스를 통해 observer에게 이벤트를 propagateg한다.
+        - 🤚 PrimitiveSequence란? <br>0개 또는 1개의 element만을 포함한 Observable sequence이다. struct임.
+    - `onSuccess`, `afterSuccess`, `onError`, `afterError`, `onSubscribe`, `onSubscribed`, `onDispose`
+
+```swift
+try await Network.request(apiType: someAPI)
+    .do(onSuccess: { [weak self] model in
+	    self?.saveModel(model)
+    })
+    .value
+```
+[이곳](https://pilgwon.github.io/blog/2018/10/08/Learn-Master-the-Basics-of-RxSwift-in-10-Minutes.html)을 참고함.
+
+<br>
+
+

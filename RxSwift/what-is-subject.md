@@ -51,6 +51,16 @@
     - 여기에 추가적으로 공식문서에서는 AsyncSubject도 소개하고 있다. 
     - 이는 구독한 시점과 상관없이 complete되기 직전 값 딱 하나만을 방출받게 되는 것을 의미한다. 만약 error로 종료될 경우 completed가 호출되지 않기 때문에 어떠한 값도 받을 수 없다.
 
+<br>
+
+**RxRelay에 대해 잠깐 살펴보도록 하자.**
+- Relay는 Subject의 wrapper 클래스이며 dispose되기 전까지 종료되지 않는다.(UI 이벤트 방출 시 용이하게 사용할 수 있음)
+    - Subject는 complete, error를 통해 dispose되기 전에 종료가 가능하다.
+- onNext() 대신 accept() 메소드로 element를 전달받아 subscriber에게 방출한다.
+- PublishRelay와 BehaviorRelay가 있으며 BehaviorRelay가 value를 통해 가장 마지막에 방출된 값에 접근할 수 있다.
+
+<br>
+
 **Subject와 Observable의 차이**
 
 - 가장 큰 차이는 unicast냐 multicast냐의 차이다.

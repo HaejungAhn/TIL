@@ -48,6 +48,11 @@ ReactiveX is a combination of the best ideas from the `Observer pattern`, the `I
 ## Rx를 왜 사용해야 할까?
 🤛 *TODO : https://github.com/ReactiveX/RxSwift/blob/main/Documentation/Why.md*
 
+<br>
+
+### 2022.11.14 업데이트
+RxSwift를 한동안 손놓고 있었다. 내용이 워낙 방대하기도 하고 어려워서..! 그런데 Swift Combine을 보고 RxSwift를 보니 확실히 이해가 훨씬 더 잘 되는 느낌이다.
+
 ---
 **👀  참고 사이트**
 - [https://daesiker.tistory.com/95](https://daesiker.tistory.com/95)
